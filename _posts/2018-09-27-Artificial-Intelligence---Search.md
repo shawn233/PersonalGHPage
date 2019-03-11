@@ -23,7 +23,7 @@ Also we should know some evaluation factors for various algorithms.
 
 Before we begin introduction and simple implementation of different search algorithms, we define a structure to unite all the implementations given below, using Python, the powerful programming language.
 
-```
+```python
 # encoding: utf-8
 # file: search_algorithm.py
 # author: shawn233
@@ -74,7 +74,7 @@ The first several algorithms belong to uninformed search. They are relatively tr
   * Optimality: Yes if step cost is a constant
 * Implementation: Use FIFO queue
 
-```
+```python
 class SearchAlforithm:
 
     # ...
@@ -106,7 +106,7 @@ class SearchAlforithm:
 * Implementation key idea: make `fringe` a priority queue, ordered by the path cost
 * Implementation
 
-```
+```python
 class ComparableNode:
     '''
     Encapsulate nodes in this class to support a priority queue
@@ -162,7 +162,7 @@ class SearchAlgorithm:
   * Optimality: No
 * Implementation: Use LIFO queue
 
-```
+```python
 class SearchAlgorithm:
 
     # ...
@@ -195,7 +195,7 @@ Because we find that the depth-first search algorithm fails when infinite depth 
   * Optimality: No from DFS
 * Implementation: There are two major ways of implementation, recursive or non-recursive. Considering the poor performance in function calls of Python, I present a non-recursive implementation.
 
-```
+```python
 class SearchAlgorithm:
 
     # ...
@@ -240,7 +240,7 @@ class SearchAlgorithm:
   * Space complexity: O(bd)
   * Optimality: Yes if step cost is a constant
 
-```
+```python
 class SearchAlgorithm:
 
     # ...
@@ -261,7 +261,7 @@ A typical informed search algorithm is the best-first search algorithm. It intro
 
 A best-first search is determined by the evaluation function, so in this part, I will define the evaluation function as an interface, and write a template of the best-first search. Later we will introduce two special cases in the best-first search, namely, the greedy best-first search and the A* search. We will implement them imitating this template.
 
-```
+```python
 class SearchAlgorithm:
 
     # ...
@@ -301,7 +301,7 @@ In short, the strategy is to expand the node that appears to be the closest to t
 
 The implementation is actually based on the best-first search template defined above.
 
-```
+```python
 class SearchAlgorithm:
 
     # ...
@@ -322,7 +322,7 @@ So in short the strategy is to avoid expanding nodes that are expensive.
   * Space complexity: All nodes are stored in memory
   * Optimality: Yes
 
-```
+```python
 class AStarNode (ComparableNode):
 
     def __init__ (self, node, measure, path_cost):
