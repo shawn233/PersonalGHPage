@@ -2,7 +2,7 @@
 title: Blog of Exploration
 SEOTitle: 王欣宇的博客 | Blog of Exploration
 header-img: img/post-bg-2015.jpg
-email: wangxinyu500103@gmail.com / wang_x_y@sjtu.edu.cn
+email: wang_x_y@sjtu.edu.cn
 description: "Every failure is leading towards success."
 keyword: "Xinyu Wang, 王欣宇, Python, Security, Privacy, Machine Learning"
 url: "http://shawn233.github.io"          # your host, for absolute URL
@@ -11,7 +11,7 @@ github_repo: "https://github.com/shawn233/shawn233.github.io.git" # you code rep
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "A traveler who desires to reach everywhere."
+sidebar-about-description: "Innovation Engineering"
 sidebar-avatar: /img/wxy-blog-pic-snap.png      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
@@ -96,9 +96,9 @@ service-worker: true
 
 
 # Friends
-friends: [
-    {
-        title: "简书·Shawn233",
-        href: "http://www.jianshu.com/u/c88e4b926e31"
-    }
-]
+#friends: [
+#    {
+#        title: "简书·Shawn233",
+#        href: "http://www.jianshu.com/u/c88e4b926e31"
+#    }
+#]
