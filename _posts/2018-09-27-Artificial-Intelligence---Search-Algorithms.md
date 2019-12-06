@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      Artificial Intelligence | Search Algorithms
-subtitle:   Search Algorithms and Python Implementations
+subtitle:   search algorithms and python implementations
 date:       2018-09-27
 author:     shawn233
 header-img: img/post-bg-cook.jpg
@@ -61,6 +61,35 @@ class SearchAlgorithm:
     def expand (self, node):
         return self.problem.action (node)
 ```
+In this article I will share with you some classic search algorithms in artificial intelligence, as well as an object-oriented code structure in Python that covers all of these algorithms. 
+
+Although search algorithms are numerous, we can always find common principles in them. So let's start with the TREE-SEARCH and GRAPH-SEARCH principals that most search algorithms follow.
+
+![](https://upload-images.jianshu.io/upload_images/10549717-8601f7cfaca6fcec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![](https://upload-images.jianshu.io/upload_images/10549717-c6c69b9c5148163c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+For various algorithms, we define some common evaluation metrics as follows.
+
+![](https://upload-images.jianshu.io/upload_images/10549717-a5e81087777ae470.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+In both tree-search and graph search principles, we have a search problem, defined by initial state, action function, final goal, and step cost. Also, we have a search algorithm comprised of a search procedure for each step, and an expand function after each step. Thus, we summarize the basic elements in a search algorithm and define the code structure as follows.
+
+```
+# encoding: utf-8
+# file: search_algorithm.py
+# author: shawn233
+# start date: 2018-09-27
+
+from __future__ import print_function
+
+class Problem:
+
+    def __init__ (self):
+        pass
+    
+    def initialState (self):
+        pass
 
 First we will learn several types of uninformed search, where we suppose we know no information other than the tree or graph. This is the simplest searching scenario. Uninformed search algorithms solve such problems with different strategies and costs. Such algorithms include
 
@@ -148,9 +177,9 @@ The uniform-cost search does not care about the breadth or the depth of the sear
 
 * Strategy: expand the least-cost unexpanded node
 * Evaluation:
-  * Completeness: Yes if step cost is greater than ¦Å
-  * Time complexity: number of nodes with cost less than the cost of optimal solution, i.e. O(b<sup>ceiling(C*/¦Å)</sup>), where C* is the cost of the optimal solution
-  * Space complexity: number of nodes with cost less than C*, i.e. O(b<sup>ceiling(C*/¦Å)</sup>)
+  * Completeness: Yes if step cost is greater than Îµ
+  * Time complexity: number of nodes with cost less than the cost of optimal solution, i.e. O(b<sup>ceiling(C*/Îµ)</sup>), where C* is the cost of the optimal solution
+  * Space complexity: number of nodes with cost less than C*, i.e. O(b<sup>ceiling(C*/Îµ)</sup>)
   * Optimality: Yes for nodes expand in ascending order of cost.
 * Implementation key idea: make `fringe` a priority queue, ordered by the path cost
 * Implementation

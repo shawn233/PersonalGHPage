@@ -12,7 +12,7 @@ tags:
 
 This post is a summary of the [official document](https://software.intel.com/en-us/documentation/intel-sgx-web-based-training/the-enclave-definition-language). For detailed information please refer to the original page.
 
-# Why Need EDL File
+### Why Need EDL File
 
 SGX ensures secret data can only be accessed by codes inside the enclave. To interact with these data from outside the enclave, SGX provides an interface for developers to build communication channels bridging the trusted and untrusted environments.
 
@@ -27,7 +27,7 @@ Although ECALLs and OCALLs may look like simple function calls, but in order to 
 
 Edger8r reads EDL file to work.
 
-# EDL File Syntax
+### EDL File Syntax
 
 In an EDL file, there are two sections, namely, `trusted` and `untrusted`.
 
