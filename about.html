@@ -191,15 +191,15 @@ header-img: "img/post-bg-rwd.jpg"
     // handle render
     function _render(){
         var _hash = window.location.hash;
-        // en
-        if(_hash == "#en"){
-            $select.selectedIndex = 0;
+        // zh
+        if(_hash == "#zh"){
+            $select.selectedIndex = 1;
             $en.style.display = "block";
             $zh.style.display = "none";
-        // zh by default
+        // en by default
         }else{
             // not trigger onChange, otherwise cause a loop call.
-            $select.selectedIndex = 1;
+            $select.selectedIndex = 0;
             $zh.style.display = "block";
             $en.style.display = "none";
         }
