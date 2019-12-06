@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      Artificial Intelligence | Search
-subtitle:   Python Implementation of Search Algorithms
+title:      Artificial Intelligence | Search Algorithms
+subtitle:   Search Algorithms and Python Implementations
 date:       2018-09-27
 author:     shawn233
 header-img: img/post-bg-cook.jpg
@@ -11,19 +11,21 @@ tags:
     - Python
 ---
 
-At the beginning, we should know the TREE-SEARCH and GRAPH-SEARCH principals that we will follow.
+In this article I will share with you some classic search algorithms in artificial intelligence, as well as an object-oriented code structure in Python that covers all of these algorithms. 
+
+Although search algorithms are numerous, we can always find common principles in them. So let's start with the TREE-SEARCH and GRAPH-SEARCH principals that most search algorithms follow.
 
 ![](https://upload-images.jianshu.io/upload_images/10549717-8601f7cfaca6fcec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ![](https://upload-images.jianshu.io/upload_images/10549717-c6c69b9c5148163c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-Also we should know some evaluation factors for various algorithms.
+For various algorithms, we define some common evaluation metrics as follows.
 
 ![](https://upload-images.jianshu.io/upload_images/10549717-a5e81087777ae470.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-Before we begin introduction and simple implementation of different search algorithms, we define a structure to unite all the implementations given below, using Python, the powerful programming language.
+In both tree-search and graph search principles, we have a search problem, defined by initial state, action function, final goal, and step cost. Also, we have a search algorithm comprised of a search procedure for each step, and an expand function after each step. Thus, we summarize the basic elements in a search algorithm and define the code structure as follows.
 
-```python
+```
 # encoding: utf-8
 # file: search_algorithm.py
 # author: shawn233
@@ -60,9 +62,21 @@ class SearchAlgorithm:
         return self.problem.action (node)
 ```
 
-The first several algorithms belong to uninformed search. They are relatively trivial, so I just give necessary points to introduce these algorithms.
+First we will learn several types of uninformed search, where we suppose we know no information other than the tree or graph. This is the simplest searching scenario. Uninformed search algorithms solve such problems with different strategies and costs. Such algorithms include
+
+- Breadth-first search
+- Uniform-cost search
+- Depth-first search
+- Depth-limited search
+- Iterative-deepening search
+
+The first three search algorithms are very similar. They only vary in their strategies to select a node to expand after each step. If you are confused about why we expand a node after each step, please refer to the tree-search and graph-search principles at the start of this article.
+
+The latter two algorithms are updates of the depth-first search.
 
 ### Breadth-First Search
+
+Breadth-first search, as its name states, prefers to search a full layer before moving to the next layer. To achieve this, after every step a node is tested, the algorithm selects the node which is not expanded and closest to the initial node. For this node, we can simply call it the shallowest unexpanded node. 
 
 * Strategy: Expand shallowest unexpanded node
 * Advantage: find the path of minimal length to the goal
@@ -74,7 +88,7 @@ The first several algorithms belong to uninformed search. They are relatively tr
   * Optimality: Yes if step cost is a constant
 * Implementation: Use FIFO queue
 
-```python
+```
 class SearchAlforithm:
 
     # ...
@@ -95,18 +109,53 @@ class SearchAlforithm:
                 q.put (sc)
 ```
 
+### Depth-First Search
+
+We can also learn the features of depth-first search from its name. This algorithm prefers to get to deeper layers in the search. Therefore, after each step, it expands the node which is not expanded and farthest from the initial node.
+
+* Strategy: Expand the deepest unexpanded node.
+* Evaluation:
+  * Completeness: No if space with depth of infinity occurs
+  * Time complexity: O(b<sup>m</sup>). Recall m is the maximum depth of the state space
+  * Depth complexity: O(bm)
+  * Optimality: No
+* Implementation: Use LIFO queue
+
+```
+class SearchAlgorithm:
+
+    # ...
+
+    def depthFirstSearch (self):
+        q = queue.LifoQueue()
+        q.put (self.problem.initialState())
+        while True:
+            if q.empty():
+                print ("[warning] no solution.")
+                return
+            state = q.get()
+            if self.problem.goalTest(state):
+                print ("Solution found!")
+                return state
+            successors = self.problem.action (state)
+            for sc in successors:
+                q.put (sc)
+```
+
 ### Uniform-Cost Search
 
-* Strategy: expand the least -cost unexpanded node
+The uniform-cost search does not care about the breadth or the depth of the search, it only cares about the step cost to expand the node. Actually, searching ordered by the step cost does not benefit any better than breadth-first or depth-first strategy. Any of the first three algorithms just tries nodes in the tree or graph, hoping to get lucky and find the goal. This is not hard to understand. All of these three algorithms (breadth-first, depth-first, uniform-cost) know nothing about the goal more than the goal is in the tree/graph. 
+
+* Strategy: expand the least-cost unexpanded node
 * Evaluation:
-  * Completeness: Yes if step cost is greater than Îµ
-  * Time complexity: number of nodes with cost less than the cost of optimal solution, i.e. O(b<sup>ceiling(C*/Îµ)</sup>), where C* is the cost of the optimal solution
-  * Space complexity: number of nodes with cost less than C*, i.e. O(b<sup>ceiling(C*/Îµ)</sup>)
+  * Completeness: Yes if step cost is greater than ¦Å
+  * Time complexity: number of nodes with cost less than the cost of optimal solution, i.e. O(b<sup>ceiling(C*/¦Å)</sup>), where C* is the cost of the optimal solution
+  * Space complexity: number of nodes with cost less than C*, i.e. O(b<sup>ceiling(C*/¦Å)</sup>)
   * Optimality: Yes for nodes expand in ascending order of cost.
 * Implementation key idea: make `fringe` a priority queue, ordered by the path cost
 * Implementation
 
-```python
+```
 class ComparableNode:
     '''
     Encapsulate nodes in this class to support a priority queue
@@ -152,40 +201,9 @@ class SearchAlgorithm:
                 q.put (ComparableNode(sc, cost))
 ```
 
-### Depth-First Search
-
-* Strategy: Expand the deepest unexpanded node.
-* Evaluation:
-  * Completeness: No if space with depth of infinity occurs
-  * Time complexity: O(b<sup>m</sup>). Recall m is the maximum depth of the state space
-  * Depth complexity: O(bm)
-  * Optimality: No
-* Implementation: Use LIFO queue
-
-```python
-class SearchAlgorithm:
-
-    # ...
-
-    def depthFirstSearch (self):
-        q = queue.LifoQueue()
-        q.put (self.problem.initialState())
-        while True:
-            if q.empty():
-                print ("[warning] no solution.")
-                return
-            state = q.get()
-            if self.problem.goalTest(state):
-                print ("Solution found!")
-                return state
-            successors = self.problem.action (state)
-            for sc in successors:
-                q.put (sc)
-```
-
 ### Depth-Limited Search
 
-Because we find that the depth-first search algorithm fails when infinite depth exists in the state space, we manually set a limit for the search depth in order to prevent the search from exploring too deep into a branch.
+The depth-first search algorithm fails when infinite depth exists in the state space. So the depth-limited search is proposed to fix this. In this algorithm, a limit for the search depth is manually set in order to prevent the search from diving too deep into a branch whose depth may be infinite.
 
 * Strategy: Set a depth limit l for the depth-first search algorithm
 * Evaluation:
@@ -195,7 +213,7 @@ Because we find that the depth-first search algorithm fails when infinite depth 
   * Optimality: No from DFS
 * Implementation: There are two major ways of implementation, recursive or non-recursive. Considering the poor performance in function calls of Python, I present a non-recursive implementation.
 
-```python
+```
 class SearchAlgorithm:
 
     # ...
@@ -228,6 +246,8 @@ class SearchAlgorithm:
 
 ### Iterative Deepening Search
 
+The iterative deepening search divides the search into many depths. In each depth, the algorithm invokes a limited-depth search. This algorithm can be considered as a combination of both breadth-first search and depth-first search. It integrates the advantages of both algorithms. The following figure demonstrates this process.
+
 ![](https://upload-images.jianshu.io/upload_images/10549717-94def53e32cb920d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 * Strategy: Iteratively search by depth-limited algorithm with depth limit increased
@@ -240,7 +260,7 @@ class SearchAlgorithm:
   * Space complexity: O(bd)
   * Optimality: Yes if step cost is a constant
 
-```python
+```
 class SearchAlgorithm:
 
     # ...
@@ -253,7 +273,7 @@ class SearchAlgorithm:
         print ("[warning] iterative deepening search can not find a solution in depth range: <", max_depth)
 ```
 
-Now we come to the topic of informed search.
+After five uninformed algorithms are introduced. Now we come to the topic of informed search. We will see that with additional information, the search algorithm changes significantly.
 
 ### Best-First Search
 
@@ -261,7 +281,7 @@ A typical informed search algorithm is the best-first search algorithm. It intro
 
 A best-first search is determined by the evaluation function, so in this part, I will define the evaluation function as an interface, and write a template of the best-first search. Later we will introduce two special cases in the best-first search, namely, the greedy best-first search and the A* search. We will implement them imitating this template.
 
-```python
+```
 class SearchAlgorithm:
 
     # ...
@@ -298,10 +318,9 @@ In short, the strategy is to expand the node that appears to be the closest to t
   * Space complexity: O(b<sup>m</sup>) for all nodes are stored
   * Optimality: No
   
-
 The implementation is actually based on the best-first search template defined above.
 
-```python
+```
 class SearchAlgorithm:
 
     # ...
@@ -322,7 +341,7 @@ So in short the strategy is to avoid expanding nodes that are expensive.
   * Space complexity: All nodes are stored in memory
   * Optimality: Yes
 
-```python
+```
 class AStarNode (ComparableNode):
 
     def __init__ (self, node, measure, path_cost):
@@ -356,37 +375,38 @@ class SearchAlgorithm:
                 q.put (AStarNode(sc, measure, pc))
 ```
 
-Now we come to another category of search algorithms: Local search algorithms.
+Other than uninformed and informed search algorithms which iterate the searching space, another category of search algorithms performs better in scenarios where the search space is extremely large, or when no exact goal-test function is specified. The property of this kind of search algorithms is that, they always find a local optimum, but only hope it is the global optimum.
+
+This type of algorithms is called local search algorithms.
 
 ### Hill-Climbing Search
 
 The name of this algorithm means we should iteratively update the current state towards the optimal state.
 
-The implementation differs in various cases, so here I only give an algorithm description.
+The implementation varies across particular cases. Here I only provide an algorithm description.
 
 ![](https://upload-images.jianshu.io/upload_images/10549717-b2249c7b72bb498d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-The disadvantage of this algorithm is obvious: the search gets stuck in some local extremes.
+The disadvantage of this algorithm is obvious: the search always gets stuck in some local extremes.
 
 ### Simulated Annealing Search
 
-This algorithm updates the hill-climbing algorithm, solving the problem of local extremes using some probability method.
+This algorithm updates the hill-climbing algorithm, solving the problem of local extremes using some probabilistic method.
 
-The key idea is to allow some bad moves in the hill-climbing search in a decreasing probability.
+The key idea is to allow some bad moves in the hill-climbing search, but only allow it in a decreasing probability.
 
-The algorithm description is given below.
+The algorithm description is as follows.
 
 ![](https://upload-images.jianshu.io/upload_images/10549717-505e9c8f88866a8a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ### Local Beam Search
 
-This algorithm is essentially running several hill-climbing searches simultaneously. It also aims at solving the problem of local extremes, just like the simulated annealing search. 
+This algorithm is essentially running several hill-climbing searches simultaneously. It also aims at solving the problem of local extremes.
 
 ![](https://upload-images.jianshu.io/upload_images/10549717-f070009c75264edd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ### Genetic Algorithm
 
-This is big topic, learn this algorithm by googling!
-
+This is big topic. Google it!
 
 
