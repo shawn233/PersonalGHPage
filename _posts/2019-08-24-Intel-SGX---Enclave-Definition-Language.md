@@ -4,7 +4,7 @@ title:      Intel SGX | Enclave Definition Language
 subtitle:   how to read a .edl file
 date:       2019-08-24
 author:     shawn233
-header-img: img/intel_sgx_intro.jpg
+header-img: img/intel_sgx_bg.jpg
 catalog: true
 tags:
     - Intel SGX
