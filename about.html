@@ -181,8 +181,8 @@ header-img: "img/post-bg-rwd.jpg"
 <!-- Handle Language Change -->
 <script type="text/javascript">
     // get nodes
-    var $en = document.querySelector(".en");
     var $zh = document.querySelector(".zh");
+    var $en = document.querySelector(".en");
     var $select = document.querySelector("select");
 
     // bind hashchange event
@@ -192,14 +192,14 @@ header-img: "img/post-bg-rwd.jpg"
     function _render(){
         var _hash = window.location.hash;
         // en
-        if(_hash == "#zh"){
-            $select.selectedIndex = 1;
+        if(_hash == "#en"){
+            $select.selectedIndex = 0;
             $en.style.display = "block";
             $zh.style.display = "none";
-        // en by default
+        // zh by default
         }else{
             // not trigger onChange, otherwise cause a loop call.
-            $select.selectedIndex = 0;
+            $select.selectedIndex = 1;
             $zh.style.display = "block";
             $en.style.display = "none";
         }
