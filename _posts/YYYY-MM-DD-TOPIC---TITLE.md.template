@@ -1,0 +1,41 @@
+---
+layout:		post
+title:		TOPIC | TITLE
+subtitle:	SUBTITLE
+date:		YYYY-MM-DD
+author:		Xinyu Wang
+header-img:	img/post-bg-cook.jpg
+catalog:	true
+tags:
+	- TAG1
+	- TAG2
+---
+
+<head>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            inlineMath: [['$','$']]
+            }
+        });
+    </script>
+</head>
+
+CONTENT
+
+# HEADER 1
+
+## HEADER 2
+
+### HEADER 3
+
+$$
+\alpha \times \beta
+$$
+
+And this is an inline formula. $a^2_3 + b_5$
+
+END
+
