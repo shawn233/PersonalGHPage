@@ -15,17 +15,17 @@ In this article I will share with you some classic search algorithms in artifici
 
 Although search algorithms are numerous, we can always find common principles in them. So let's start with the TREE-SEARCH and GRAPH-SEARCH principals that most search algorithms follow.
 
-![](https://upload-images.jianshu.io/upload_images/10549717-8601f7cfaca6fcec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![tree-search](.assets/tree-search.png)
 
-![](https://upload-images.jianshu.io/upload_images/10549717-c6c69b9c5148163c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![graph-search](.assets/graph-search.png)
 
 For various algorithms, we define some common evaluation metrics as follows.
 
-![](https://upload-images.jianshu.io/upload_images/10549717-a5e81087777ae470.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![search-notations](.assets/search-notations.png)
 
 In both tree-search and graph search principles, we have a search problem, defined by initial state, action function, final goal, and step cost. Also, we have a search algorithm comprised of a search procedure for each step, and an expand function after each step. Thus, we summarize the basic elements in a search algorithm and define the code structure as follows.
 
-```
+```c++
 # encoding: utf-8
 # file: search_algorithm.py
 # author: shawn233
@@ -40,56 +40,7 @@ class Problem:
     
     def initialState (self):
         pass
-
-    def action (self, node):
-        pass
-    
-    def goalTest (self, node):
-        pass
-
-    def pathCost (self, node):
-        pass
-
-    def stepCost (self, node_from, node_to):
-        pass
-
-class SearchAlgorithm:
-
-    def __init__ (self, problem):
-        self.problem = problem
-
-    def expand (self, node):
-        return self.problem.action (node)
 ```
-In this article I will share with you some classic search algorithms in artificial intelligence, as well as an object-oriented code structure in Python that covers all of these algorithms. 
-
-Although search algorithms are numerous, we can always find common principles in them. So let's start with the TREE-SEARCH and GRAPH-SEARCH principals that most search algorithms follow.
-
-![](https://upload-images.jianshu.io/upload_images/10549717-8601f7cfaca6fcec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-![](https://upload-images.jianshu.io/upload_images/10549717-c6c69b9c5148163c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-For various algorithms, we define some common evaluation metrics as follows.
-
-![](https://upload-images.jianshu.io/upload_images/10549717-a5e81087777ae470.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-In both tree-search and graph search principles, we have a search problem, defined by initial state, action function, final goal, and step cost. Also, we have a search algorithm comprised of a search procedure for each step, and an expand function after each step. Thus, we summarize the basic elements in a search algorithm and define the code structure as follows.
-
-```
-# encoding: utf-8
-# file: search_algorithm.py
-# author: shawn233
-# start date: 2018-09-27
-
-from __future__ import print_function
-
-class Problem:
-
-    def __init__ (self):
-        pass
-    
-    def initialState (self):
-        pass
 
 First we will learn several types of uninformed search, where we suppose we know no information other than the tree or graph. This is the simplest searching scenario. Uninformed search algorithms solve such problems with different strategies and costs. Such algorithms include
 
@@ -117,11 +68,11 @@ Breadth-first search, as its name states, prefers to search a full layer before 
   * Optimality: Yes if step cost is a constant
 * Implementation: Use FIFO queue
 
-```
+```c++
 class SearchAlforithm:
 
     # ...
-
+    
     def breadthFirstSearch (self):
         q = queue.Queue()
         q.put (self.problem.initialState())
@@ -150,11 +101,11 @@ We can also learn the features of depth-first search from its name. This algorit
   * Optimality: No
 * Implementation: Use LIFO queue
 
-```
+```c++
 class SearchAlgorithm:
 
     # ...
-
+    
     def depthFirstSearch (self):
         q = queue.LifoQueue()
         q.put (self.problem.initialState())
@@ -178,13 +129,13 @@ The uniform-cost search does not care about the breadth or the depth of the sear
 * Strategy: expand the least-cost unexpanded node
 * Evaluation:
   * Completeness: Yes if step cost is greater than ε
-  * Time complexity: number of nodes with cost less than the cost of optimal solution, i.e. O(b<sup>ceiling(C*/ε)</sup>), where C* is the cost of the optimal solution
-  * Space complexity: number of nodes with cost less than C*, i.e. O(b<sup>ceiling(C*/ε)</sup>)
+  * Time complexity: number of nodes with cost less than the cost of optimal solution, i.e. O(b<sup>ceiling(C\*/ε)</sup>), where C\* is the cost of the optimal solution
+  * Space complexity: number of nodes with cost less than C\*, i.e. O(b<sup>ceiling(C\*/ε)</sup>)
   * Optimality: Yes for nodes expand in ascending order of cost.
 * Implementation key idea: make `fringe` a priority queue, ordered by the path cost
 * Implementation
 
-```
+```c++
 class ComparableNode:
     '''
     Encapsulate nodes in this class to support a priority queue
@@ -193,23 +144,23 @@ class ComparableNode:
     def __init__ (self, node, measure):
         self.node = node
         self.measure = measure
-
+    
     def __cmp__ (self, other):
         if self.measure < other.measure:
             return True
         else:
             return False
-
+    
     def getNode (self):
         return self.node
-
+    
     def getMeasure (self):
         return self.measure
 
 class SearchAlgorithm:
 
     # ...
-
+    
     def uniformCostSearch (self):
         q = queue.PriorityQueue()
         q.put (ComparableNode(self.problem.initialState(), 0))
@@ -242,11 +193,11 @@ The depth-first search algorithm fails when infinite depth exists in the state s
   * Optimality: No from DFS
 * Implementation: There are two major ways of implementation, recursive or non-recursive. Considering the poor performance in function calls of Python, I present a non-recursive implementation.
 
-```
+```c++
 class SearchAlgorithm:
 
     # ...
-
+    
     def depthLimitedSearch (self, l):
         '''
         Argument l indicates the depth limit
@@ -277,7 +228,7 @@ class SearchAlgorithm:
 
 The iterative deepening search divides the search into many depths. In each depth, the algorithm invokes a limited-depth search. This algorithm can be considered as a combination of both breadth-first search and depth-first search. It integrates the advantages of both algorithms. The following figure demonstrates this process.
 
-![](https://upload-images.jianshu.io/upload_images/10549717-94def53e32cb920d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![iterative-deepening-search](.assets/iterative-deepening-search.png)
 
 * Strategy: Iteratively search by depth-limited algorithm with depth limit increased
 * Advantage:
@@ -289,11 +240,11 @@ The iterative deepening search divides the search into many depths. In each dept
   * Space complexity: O(bd)
   * Optimality: Yes if step cost is a constant
 
-```
+```c++
 class SearchAlgorithm:
 
     # ...
-
+    
     def iterativeDeepeningSearch (self, max_depth = 1e5):
         for depth in range (max_depth):
             res = self.depthLimitedSearch(depth)
@@ -308,13 +259,13 @@ After five uninformed algorithms are introduced. Now we come to the topic of inf
 
 A typical informed search algorithm is the best-first search algorithm. It introduces an **evaluation function**  f(n) to estimate our desire to expand each node. In each step, we should always **expand the most desirable unexpanded node**. A natural implementation is to store nodes in a priority queue sorted by the value of evaluation.
 
-A best-first search is determined by the evaluation function, so in this part, I will define the evaluation function as an interface, and write a template of the best-first search. Later we will introduce two special cases in the best-first search, namely, the greedy best-first search and the A* search. We will implement them imitating this template.
+A best-first search is determined by the evaluation function, so in this part, I will define the evaluation function as an interface, and write a template of the best-first search. Later we will introduce two special cases in the best-first search, namely, the greedy best-first search and the A\* search. We will implement them imitating this template.
 
-```
+```c++
 class SearchAlgorithm:
 
     # ...
-
+    
     def bestFirstSearch (self, evaluation):
         '''
         Only a template, can not run
@@ -347,20 +298,21 @@ In short, the strategy is to expand the node that appears to be the closest to t
   * Space complexity: O(b<sup>m</sup>) for all nodes are stored
   * Optimality: No
   
+
 The implementation is actually based on the best-first search template defined above.
 
-```
+```c++
 class SearchAlgorithm:
 
     # ...
-
+    
     def greedyBestFirstSearch(self, heuristic):
         return self.bestFirstSearch(heuristic)
 ```
 
-### Best-First Search II - A* Search
+### Best-First Search II - A\* Search
 
-The key idea of updating greedy bf search to A* search is to modify the evaluation function f(n) from h(n) to g(n) + h(n), where g(n) is the path cost from initial state to n. 
+The key idea of updating greedy bf search to A\* search is to modify the evaluation function f(n) from h(n) to g(n) + h(n), where g(n) is the path cost from initial state to n. 
 
 So in short the strategy is to avoid expanding nodes that are expensive.
 
@@ -370,7 +322,7 @@ So in short the strategy is to avoid expanding nodes that are expensive.
   * Space complexity: All nodes are stored in memory
   * Optimality: Yes
 
-```
+```c++
 class AStarNode (ComparableNode):
 
     def __init__ (self, node, measure, path_cost):
@@ -383,7 +335,7 @@ class AStarNode (ComparableNode):
 class SearchAlgorithm:
 
     # ...
-
+    
     def aStarSearch (self, heuristic):
         q = queue.PriorityQueue()
         q.put (AStarNode(self.problem.initialState(), 0, 0))
@@ -414,7 +366,7 @@ The name of this algorithm means we should iteratively update the current state 
 
 The implementation varies across particular cases. Here I only provide an algorithm description.
 
-![](https://upload-images.jianshu.io/upload_images/10549717-b2249c7b72bb498d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![hill-climbing](.assets/hill-climbing.png)
 
 The disadvantage of this algorithm is obvious: the search always gets stuck in some local extremes.
 
@@ -426,13 +378,13 @@ The key idea is to allow some bad moves in the hill-climbing search, but only al
 
 The algorithm description is as follows.
 
-![](https://upload-images.jianshu.io/upload_images/10549717-505e9c8f88866a8a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![simulated-annealing](.assets/simulated-annealing-1578747489995.png)
 
 ### Local Beam Search
 
 This algorithm is essentially running several hill-climbing searches simultaneously. It also aims at solving the problem of local extremes.
 
-![](https://upload-images.jianshu.io/upload_images/10549717-f070009c75264edd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![local-beam-search](.assets/local-beam-search.png)
 
 ### Genetic Algorithm
 
