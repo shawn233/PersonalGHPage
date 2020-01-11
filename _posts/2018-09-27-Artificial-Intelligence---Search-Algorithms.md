@@ -15,13 +15,13 @@ In this article I will share with you some classic search algorithms in artifici
 
 Although search algorithms are numerous, we can always find common principles in them. So let's start with the TREE-SEARCH and GRAPH-SEARCH principals that most search algorithms follow.
 
-![tree-search](.assets/tree-search.png)
+![tree-search](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/tree-search.png)
 
-![graph-search](.assets/graph-search.png)
+![graph-search](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/graph-search.png)
 
 For various algorithms, we define some common evaluation metrics as follows.
 
-![search-notations](.assets/search-notations.png)
+![search-notations](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/search-notations.png)
 
 In both tree-search and graph search principles, we have a search problem, defined by initial state, action function, final goal, and step cost. Also, we have a search algorithm comprised of a search procedure for each step, and an expand function after each step. Thus, we summarize the basic elements in a search algorithm and define the code structure as follows.
 
@@ -228,7 +228,7 @@ class SearchAlgorithm:
 
 The iterative deepening search divides the search into many depths. In each depth, the algorithm invokes a limited-depth search. This algorithm can be considered as a combination of both breadth-first search and depth-first search. It integrates the advantages of both algorithms. The following figure demonstrates this process.
 
-![iterative-deepening-search](.assets/iterative-deepening-search.png)
+![iterative-deepening-search](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/iterative-deepening-search.png)
 
 * Strategy: Iteratively search by depth-limited algorithm with depth limit increased
 * Advantage:
@@ -366,7 +366,7 @@ The name of this algorithm means we should iteratively update the current state 
 
 The implementation varies across particular cases. Here I only provide an algorithm description.
 
-![hill-climbing](.assets/hill-climbing.png)
+![hill-climbing](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/hill-climbing.png)
 
 The disadvantage of this algorithm is obvious: the search always gets stuck in some local extremes.
 
@@ -378,13 +378,13 @@ The key idea is to allow some bad moves in the hill-climbing search, but only al
 
 The algorithm description is as follows.
 
-![simulated-annealing](.assets/simulated-annealing-1578747489995.png)
+![simulated-annealing](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/simulated-annealing-1578747489995.png)
 
 ### Local Beam Search
 
 This algorithm is essentially running several hill-climbing searches simultaneously. It also aims at solving the problem of local extremes.
 
-![local-beam-search](.assets/local-beam-search.png)
+![local-beam-search](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/local-beam-search.png)
 
 ### Genetic Algorithm
 
