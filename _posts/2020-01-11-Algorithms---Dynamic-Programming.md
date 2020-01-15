@@ -1,11 +1,13 @@
 ---
 layout:		post
-title:		TOPIC | TITLE
-subtitle:	SUBTITLE
+title:		Algorithms | Dynamic Programming
+subtitle:	Those who do not remember the past are condemned to repeat it.
 date:		2020-01-11
 author:		Xinyu Wang
 header-img:	img/post-bg-cook.jpg
 catalog:	true
+tags:
+	- Algorithms
 ---
 
 <head>
@@ -20,19 +22,17 @@ catalog:	true
     </script>
 </head>
 
-CONTENT
+# Introduction
 
-# HEADER 1
+## Suboptimal substructure property
 
-## HEADER 2
+## Repeated subproblem property
 
-### HEADER 3
+# Weighted Interval Scheduling
 
-$$
-\alpha \times \beta
-$$
+# Segmented Least Squares
 
-And this is an inline formula. $a^2_3 + b_5$
+# Knapsack Problem
 
-END
+# RNA Secondary Structure
 
