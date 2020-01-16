@@ -1,9 +1,9 @@
 ---
 layout:		post
-title:		C++ | std::vector, a Summary
-subtitle:	a comprehensive note for std::vector
+title:		C++ | std::vector, a summary
+subtitle:	a comprehensive note of std::vector
 date:		2020-01-16
-author:		Xinyu Wang
+author:		shawn233
 header-img:	img/post-bg-cook.jpg
 catalog:	true
 tags:
@@ -21,9 +21,9 @@ My summary has several parts.
 - Introduction: to tell you what a std::vector is and how to use it in the simplest way.
 - Class Template: a necessary part to tell you the template parameter of std::vector
 - Scenarios: a summary of scenarios where we frequently use std::vector and how we use it.
-  - Create a Vector: ways to create a vector `v`
-  - Insert an element: ways to insert elements into vector `v`, featuring an analysis of time cost
-  - Modify the vector: ways to modify vector `v`
+  - Create a Vector: ways to create a vector *v*
+  - Insert an element: ways to insert elements into vector *v*, featuring an analysis of time cost
+  - Modify the vector: ways to modify vector *v*
 
 Suggestions to myself on writing posts.
 
