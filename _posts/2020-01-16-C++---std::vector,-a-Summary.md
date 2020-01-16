@@ -1,7 +1,7 @@
 ---
 layout:		post
 title:		C++ | std::vector, a Summary
-subtitle:	a comprehensive note for std::ector
+subtitle:	a comprehensive note for std::vector
 date:		2020-01-16
 author:		Xinyu Wang
 header-img:	img/post-bg-cook.jpg
@@ -43,7 +43,7 @@ Suggestions to myself on writing posts.
 
 - Try using bullet points to explain an idea.
 
-# Introduction
+## Introduction
 
 Vectors are sequence containers representing arrays that can change in size.
 
@@ -67,7 +67,7 @@ Here is a simple example to use `std::vectors`.
 
 > TODO: a simple example of using vector
 
-# Class Template
+## Class Template
 
 ```c++
 template < class T, class Alloc = allocator<T> > class vector;
@@ -80,9 +80,9 @@ Member types:
 
 ![](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/image-20200116111932792.png)
 
-# Scenarios
+## Scenarios
 
-## Create a vector
+### Create a vector
 
 Official doc provides 6 ways to construct (create) a vector.
 
@@ -164,7 +164,7 @@ Output
 The contents of fifth are: 16 2 77 29
 ```
 
-## Insert an element
+### Insert an element
 
 1. add an element at the end
 	```c++
@@ -232,6 +232,6 @@ Output
 myvector contains: 501 502 503 300 300 400 400 200 100 100 100
 ```
 
-## Modify the vector
+### Modify the vector
 
 
