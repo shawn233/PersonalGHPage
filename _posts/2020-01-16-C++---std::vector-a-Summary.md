@@ -1,6 +1,6 @@
 ---
 layout:		post
-title:		C++ | std::vector, a summary
+title:		C++ | std::vector a summary
 subtitle:	a comprehensive note of std::vector
 date:		2020-01-16
 author:		shawn233
