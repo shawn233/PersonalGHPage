@@ -7,7 +7,7 @@ author:		shawn233
 header-img:	img/post-bg-cook.jpg
 catalog:	true
 tags:
-	- C/C++
+	- a safe tag
 ---
 
 This is my first summary of a standard C++ class template. As a starter of a very long series, I try to achieve the following goals with this post:
