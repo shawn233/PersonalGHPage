@@ -5,7 +5,7 @@ subtitle:	a summary of standard C++ data structures
 date:		2020-01-16
 author:		Xinyu Wang
 header-img:	img/post-bg-cook.jpg
-catalog:	true
+catalog: true
 tags:
 	- C++
 	- Data structures
