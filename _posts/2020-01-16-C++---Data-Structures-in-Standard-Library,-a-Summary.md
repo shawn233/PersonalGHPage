@@ -21,6 +21,7 @@ Data structures in standard library:
 - [std::*array*](http://www.cplusplus.com/reference/array/) is a fixed-size sequence container. It holds elements in a strict linear order.
     ```c++
     #include <array>
+    
     template < class T, size_t N > class array;
     ```
 - [std::*deque*](http://www.cplusplus.com/reference/deque/deque/)
@@ -29,6 +30,7 @@ Data structures in standard library:
     - Compared with std::*multimap*, it does not allow multiple elements to hold an equivalent key. The key of every element is unique.
     ```c++
     #include <map>
+    
     template < class Key,                                   // map::key_type
                class T,                                     // map::mapped_type
                class Compare = less<Key>                    // map::key_compare
@@ -38,6 +40,7 @@ Data structures in standard library:
 - [std::*multimap*](http://www.cplusplus.com/reference/map/multimap/) is a binary search tree which holds a key and its mapped value in each node, and allows multiple elements to hold an equivalent key.
     ```c++
     #include <map>
+    
     template < class Key,                                   // map::key_type
                class T,                                     // map::mapped_type
                class Compare = less<Key>                    // map::key_compare
@@ -49,6 +52,7 @@ Data structures in standard library:
     - Compared with std::*unordered_multimap*, it does not allow multiple elements to hold an equivalent key. The key of every element is unique.
     ```c++
     #include <unordered_map>
+    
     template < class Key,                                       // unordered_map::key_type
                class T,                                         // unordered_map::mapped_type
                class Hash = hash<Key>,                          // unordered_map::hasher
@@ -58,6 +62,8 @@ Data structures in standard library:
     ```
 - [std::*unordered_multimap*](http://www.cplusplus.com/reference/unordered_map/unordered_multimap/)
     ```c++
+    #include <unordered_map>
+
     template < class Key,                                   // unordered_multimap::key_type
                class T,                                     // unordered_multimap::mapped_type
                class Hash = hash<Key>,                      // unordered_multimap::hasher
@@ -68,6 +74,7 @@ Data structures in standard library:
 - [std::*vector*](http://www.cplusplus.com/reference/vector/vector/) is an array that dynamically changes in size to fit with its elements.
     ```c++
     #include <vector>
+    
     template < class T, class Alloc = allocator<T> > class vector;
     ```
 
