@@ -1,5 +1,5 @@
 ---
-layout:		post
+layout:     post
 title:		C++ | Data Structures in Standard Library, a Summary
 subtitle:	a summary of standard C++ data structures
 date:		2020-01-16
