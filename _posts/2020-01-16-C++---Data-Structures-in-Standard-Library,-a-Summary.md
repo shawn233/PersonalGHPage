@@ -16,6 +16,8 @@ Suggestions to myself on writing posts.
 - Try using bullet points to explain an idea.
 - Always remember that copying official documents does nothing more than wasting time. The only thing to help memorizing is to read and then practice.
 
+Data structures in standard library:
+
 - [std::*vector*](http://www.cplusplus.com/reference/vector/vector/) is an array that dynamically changes in size to fit with its elements.
 
 
