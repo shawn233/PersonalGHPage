@@ -1,13 +1,13 @@
 ---
-layout:		post
-title:		Algorithms | Dynamic Programming
-subtitle:	Those who do not remember the past are condemned to repeat it.
-date:		2020-01-11
-author:		Xinyu Wang
+layout:     post
+title:      Algorithms | Dynamic Programming
+subtitle:   Those who do not remember the past are condemned to repeat it.
+date:       2020-01-11
+author:     Xinyu Wang
 header-img:	img/post-bg-cook.jpg
-catalog:	true
+catalog:    true
 tags:
-	- Algorithms
+    - Algorithms
 ---
 
 <head>
