@@ -1,13 +1,14 @@
 ---
-layout:     post
-title:      Python++ | 复制的学问：深复制,与浅复制
-subtitle:   the usage of threading package
-date:       2020-01-17
-author:     Xinyu Wang
-header-img: img/post-bg-miui6.jpg
+layout:		post
+title:		C+ | Data Structures in Standard Library, a Summary
+subtitle:	a summary of standard C++ data structures
+date:		2020-01-16
+author:		Xinyu Wang
+header-img:	img/post-bg-cook.jpg
 catalog: true
 tags:
-    - Python
+	- C++
+	- Data structures
 ---
 
 Suggestions to myself on writing posts.
