@@ -15,7 +15,7 @@ This post shows my configuration codes to quickly configure my CS:GO settings. S
 ## Launch Options
 
 ```bash
--console -novid -high -fullscreen -width 1280 -height 720 -perfectworld
+-console -novid -exec autoexec -high -fullscreen -width 1280 -height 720 -perfectworld
 ```
 
 Enable console, disable intro video, give the game high CPU priority, and load in full screen mode
@@ -43,8 +43,8 @@ echo "* Display setting successful *"
 
 // Net graph
 net_graph 1                     // net graph
-net_graphpos 0                  // position of net graph {0,1,2}
-net_graphproportionalfont 1     // font size of net graph
+net_graphpos 1                  // position of net graph {0,1,2}
+net_graphproportionalfont 0.8   // font size of net graph
 
 echo "* Net graph setting successful *"
 
@@ -81,8 +81,8 @@ echo "* HUD setting successful *"
 // Radar
 cl_radar_always_centered 1      // radar centers at player
 cl_teammate_colors_show 1
-cl_radar_scale "0.45"           // radar scaling
-cl_hud_radar_scale "1.3"        // radar HUD scaling
+cl_radar_scale "0.3"           // radar scaling
+cl_hud_radar_scale "1.2"        // radar HUD scaling
 cl_radar_icon_scale_min 0.1     // radar player icon scaling
 cl_radar_rotate 0               // disable radar rotation
 cl_radar_square_with_scoreboard 1
@@ -115,7 +115,7 @@ echo "* Generic setting successful *"
 
 ```bash
 // Mouse
-sensitivity 1
+sensitivity 1.15
 m_rawinput 1
 m_mouseaccel1 0
 m_mouseaccel2 0
@@ -124,11 +124,11 @@ echo "* Mouse setting successful *"
 
 // Crosshair
 crosshair 1
-cl_crosshairstyle 1
-cl_crosshaircolor 4             // light blue
+cl_crosshairstyle "4"
+cl_crosshaircolor "4"           // light blue
 cl_crosshairsize 3              // crosshair size
-cl_crosshairthickness 1
-cl_crosshairgap -1
+cl_crosshairthickness 0.5
+cl_crosshairgap -1.5
 cl_crosshairdot 0               // no dot
 cl_crosshair_drawoutline 1
 
@@ -146,13 +146,61 @@ alias "+cjump" "+jump;+duck"
 alias "-cjump" "-jump;-duck"
 bind SPACE "+cjump"
 
-bind F1 "buy kevlar; buy ak47"
-bidn F2 "buy vesthelm; buy defuser"
-bind F3 "buy smokegrenade; buy flashbang; buy incgrenade; buy molotov"
+bind F1 "buy vest; buy ak47"
+bind F2 "buy vesthelm; buy defuser"
+bind F3 "buy smokegrenade; buy flashbang; buy hegrenade; buy molotov"
 bind F4 "buy smokegrenade; buy flashbang; buy flashbang; buy molotov"
-bind F7 "toggle cl_crosshairsize 3 100"
+bind F5 "buy awp; buy vest; buy vesthelm" 
+bind F7 "toggle cl_crosshairsize 3 999"
 
 echo "* Key binding successful *"
+echo "* Personal setting successful *"
+```
+
+## One-time execution
+
+To use these configuration in a console instead in a script, copy and paste the console version below.
+
+```bash
+```
+
+## Training Script
+
+This script converts a normal BOT match into a map training.
+
+```bash
+sv_cheats 1
+mp_autoteambalance 0            // disable team balance
+mp_limitteams 0                 // disable team limits
+mp_respawn_immunitytime 0		// set immunity time after respawn to 0 
+//mp_give_player_c4 0           // no C4
+mp_buy_anywhere 1               // able to buy anywhere
+mp_maxmoney 50000               // maximum money
+mp_startmoney 50000             // start-up money
+mp_buytime 999999               // buy time
+ammo_grenade_limit_total "6"    // grenade amount
+mp_free_armor 0                 // no armor
+mp_round_restart_delay 0        // set round restart delay
+mp_freezetime 0                 // set freeze time
+mp_do_warmup_offine 1           // start offline warmup
+mp_do_warmup_period 1           // enable warmup
+mp_warmuptime 5400              // set warmup time
+sv_infinite_ammo 2              // infinite ammo {0,1,2}
+sv_grenade_trajectory 1         // display grenade traces
+sv_showimpacts 1                // show hits
+mp_forcecamera 0                //
+mp_teammates_are_enemies 1      // equal damage to all players
+sv_alltalk 1                    // all talk
+bot_stop 1                      // bot can't move
+bot_join_after_player 1         // bot join after player
+mp_restartgame 1                // restart game
+bot_kick                        // kick all bots
+
+bind H "noclip"
+bind J "bot_place"
+bind F6 "god"
+//bind "F1" "bot_add_ct"
+//bind "F2" "bot_add_t"
 ```
 
 Reference: 
