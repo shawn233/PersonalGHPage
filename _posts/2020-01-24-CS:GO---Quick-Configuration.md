@@ -172,7 +172,7 @@ This script converts a normal BOT match into a map training.
 sv_cheats 1
 mp_autoteambalance 0            // disable team balance
 mp_limitteams 0                 // disable team limits
-mp_respawn_immunitytime 0		// set immunity time after respawn to 0 
+mp_respawn_immunitytime 0       // set immunity time after respawn to 0 
 //mp_give_player_c4 0           // no C4
 mp_buy_anywhere 1               // able to buy anywhere
 mp_maxmoney 50000               // maximum money
