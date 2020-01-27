@@ -168,7 +168,7 @@ To use these configuration in a console instead in a script, copy and paste the 
 
 This script converts a normal BOT match into a map training.
 
-```bash
+```
 sv_cheats 1
 mp_autoteambalance 0            // disable team balance
 mp_limitteams 0                 // disable team limits
