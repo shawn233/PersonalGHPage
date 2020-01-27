@@ -25,7 +25,7 @@ For various algorithms, we define some common evaluation metrics as follows.
 
 In both tree-search and graph search principles, we have a search problem, defined by initial state, action function, final goal, and step cost. Also, we have a search algorithm comprised of a search procedure for each step, and an expand function after each step. Thus, we summarize the basic elements in a search algorithm and define the code structure as follows.
 
-```c++
+```python
 # encoding: utf-8
 # file: search_algorithm.py
 # author: shawn233
@@ -68,7 +68,7 @@ Breadth-first search, as its name states, prefers to search a full layer before 
   * Optimality: Yes if step cost is a constant
 * Implementation: Use FIFO queue
 
-```c++
+```python
 class SearchAlforithm:
 
     # ...
@@ -101,7 +101,7 @@ We can also learn the features of depth-first search from its name. This algorit
   * Optimality: No
 * Implementation: Use LIFO queue
 
-```c++
+```python
 class SearchAlgorithm:
 
     # ...
@@ -135,7 +135,7 @@ The uniform-cost search does not care about the breadth or the depth of the sear
 * Implementation key idea: make `fringe` a priority queue, ordered by the path cost
 * Implementation
 
-```c++
+```python
 class ComparableNode:
     '''
     Encapsulate nodes in this class to support a priority queue
@@ -193,7 +193,7 @@ The depth-first search algorithm fails when infinite depth exists in the state s
   * Optimality: No from DFS
 * Implementation: There are two major ways of implementation, recursive or non-recursive. Considering the poor performance in function calls of Python, I present a non-recursive implementation.
 
-```c++
+```python
 class SearchAlgorithm:
 
     # ...
@@ -240,7 +240,7 @@ The iterative deepening search divides the search into many depths. In each dept
   * Space complexity: O(bd)
   * Optimality: Yes if step cost is a constant
 
-```c++
+```python
 class SearchAlgorithm:
 
     # ...
@@ -261,7 +261,7 @@ A typical informed search algorithm is the best-first search algorithm. It intro
 
 A best-first search is determined by the evaluation function, so in this part, I will define the evaluation function as an interface, and write a template of the best-first search. Later we will introduce two special cases in the best-first search, namely, the greedy best-first search and the A\* search. We will implement them imitating this template.
 
-```c++
+```python
 class SearchAlgorithm:
 
     # ...
@@ -301,7 +301,7 @@ In short, the strategy is to expand the node that appears to be the closest to t
 
 The implementation is actually based on the best-first search template defined above.
 
-```c++
+```python
 class SearchAlgorithm:
 
     # ...
@@ -322,7 +322,7 @@ So in short the strategy is to avoid expanding nodes that are expensive.
   * Space complexity: All nodes are stored in memory
   * Optimality: Yes
 
-```c++
+```python
 class AStarNode (ComparableNode):
 
     def __init__ (self, node, measure, path_cost):
