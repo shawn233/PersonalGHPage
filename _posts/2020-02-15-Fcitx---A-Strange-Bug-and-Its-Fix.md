@@ -10,7 +10,7 @@ tags:
     - Ubuntu
 ---
 
-There was a bug which had troubled me for quite a few days. Every time I used Google pinyu to type in Chinese characters, fcitx crashed and the only characters that I could type were English. 
+A bug of fcitx has troubled me for quite a few days. Every time I used Google Pinyu to input Chinese characters, fcitx crashed and the only characters that I could input were English. 
 
 When I checked the crash log of fcitx,
 
@@ -18,7 +18,7 @@ When I checked the crash log of fcitx,
 vim ~/.config/fcitx/log/crash.log
 ```
 
-it says:
+it reported receiving signal no. 11:
 
 ```bash
 =========================
@@ -49,12 +49,12 @@ fcitx(+0xf6c)[0x562e41e82f6c]
 fcitx(+0xfea)[0x562e41e82fea]
 ```
 
-I searched this crash log on Google, but found none similar previous cases. Some suggested a re-installation, and others mentioned some strange term, Wayland. I thought this as a small problem and not worth so much trouble. So I tried a simple tip in a thread which solved another crash problem of fcitx. Fortunately, it worked.
+I searched this crash log on Google, but found no similar previous cases. Some suggested a re-installation, and others referred to technical terms that I was unfamiliar with, such as Wayland. I thought this a small problem and not worth so much trouble. So I tried a simple tip in a thread which solved another crash problem of fcitx. Fortunately, it worked.
 
-So now I post this thread, hoping to help those who also have this problem, and save them time to come up with the solution. Now, my fix is to remove the configuration folder of the abnormal input method, google pinyu, by using the following command.
+Now I post this thread, hoping to help those who happen to have the same problem, and save them time to come up with the solution. So, my fix is to remove the configuration folder of the abnormal input method, google pinyu, by using the following command.
 
 ```bash
 rm -r ~/.config/fcitx/googlepinyin
 ```
 
-Hope this thread helps~
+Hope this helps~
