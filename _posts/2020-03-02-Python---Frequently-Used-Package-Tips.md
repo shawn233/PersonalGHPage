@@ -464,20 +464,185 @@ With the range of variable *args* returned by the *parse_args()* method, values 
 # parser = argparse.ArgumentParser()
 # ... adding arguments
 args = parser.parse_args()
-print(args.word) 		# harry
-print(args.number) 		# 3
-print(args.seperator)	# **
+print(args.word)        # harry
+print(args.number)      # 3
+print(args.seperator)   # **
 ```
 
-# Threading
+# Threading | Thread-based parallelism
+
+[threading module](https://docs.python.org/3/library/threading.html) allows you to implement **parallelism** in a convenient way.
+
+```python
+import threading
+```
+
+(Using the threading module usually includes a large amount codes, such as worker definition, thread creation, and main thread implementation. So due to restricted space, sample codes in this section are mostly provided as pseudocodes. But don't worry, these codes are fully commented and clear enough to get the idea. For more curious readers, I also uploaded some [realistic samples](https://github.com/shawn233/shawn233.github.io/tree/master/_posts/related-codes/threading-samples) that you can play with.)
+
+[*threading.Thread*](https://docs.python.org/3/library/threading.html#threading.Thread) objects are created to actually work as threads. There are mainly two ways to designate the routine that the thread executes.
+
+- construct a *Thread* object with a *target* argument
+- override the *run()* method in a subclass
+
+The *target* argument accepts a callable object, to be invoked by the *run()* method.
+
+Let's say we would like to download some data from a set of given links. Due to terrible network, downloading a file takes as slow as several seconds. Since at most time our program is just waiting for response from remote servers, what we are writing is an IO-bounded program.
+
+With the help of threading module, this program get boosted using multiple threads to request multiple servers at the same time.
+
+```python
+# pseudocode
+link_pool = ["link 1", "link 2", ...]
+thread_pool = list()
+
+for link in link_pool:
+    thread = threading.Thread(target=download, args=(link,))
+    thread_pool.append(thread)
+
+for thread in thread_pool:
+    thread.join()
+```
+
+Overriding *\_\_init\_\_()* and *run()* methods also works.
+
+```python
+# pseudocode
+class DownloadThread(threading.Thread):
+    def __init__(self, link):
+        super().__init__()
+        self.link = link
+    def run(self):
+        # to be invoked by .start() method
+        download_from(self.link)
+
+link_pool = ["link 1", "link 2", ...]
+thread_pool = list()
+for link in link_pool:
+    thread = DownloadThread(link)
+    thread.start()
+
+for thread in thread_pool:
+    thread.join()
+```
+
+Besides *Thread*, threading module has an extensive set of useful classes to facilitate multi-thread programming.
+
+[*threading.Lock*](https://docs.python.org/3/library/threading.html#threading.Lock) provides a basic primitive to avoid race conditions.
+
+```python
+class Database:
+    def __init__(self):
+        self.val = 0
+        self._lock = threading.Lock()
+    def increment_one(self):
+        self._lock.acquire()
+        # simulate read-modify-write
+        local_copy = self.val() # get val
+        local_copy += 1 # increment by 1
+        time.sleep(0.5) # processing delay
+        self.val = local_copy # database updated
+        self._lock.release()
+```
+
+Although it is quite intuitive to use a lock object by invoking its *acquire()* and *release()* methods, it is strongly recommended to use the lock as a context manager (*with* statement), because a context manager ensures the lock is automatically released when the *with* block exits for any reason, especially due to exceptions.
+
+```python
+with self._lock:
+    # do something ...
+```
+
+is equivalent to:
+
+```python
+self._lock.acquire()
+try:
+    # do something ...
+finally:
+    self._lock.release()
+```
+
+(Context managers also work for *threading.Condition* and *threading.Semaphore* objects.)
+
+[*threading.Semaphore*](https://docs.python.org/3/library/threading.html#threading.Semaphore) implements semaphore, which manages an atomic (thread-safe) counter. Invoking *acquire()* method on the *Semaphore* object decrements the counter value by 1. When the counter value is 0, invoking *acquire()* method blocks the thread until another thread invokes *release()* method which increments counter value by 1.
+
+```python
+>>> import threading
+>>> sema = threading.Semaphore(value=1) # counter set to 1
+>>> sema.release() # unreasonable but allowed, counter:1->2
+>>> sema.acquire(blocking=True, timeout=1) # counter:2->1
+True
+>>> sema.acquire(blocking=True, timeout=1) # counter:1->0
+True
+>>> sema.acquire(blocking=True, timeout=1) # counter:0
+False
+>>> sema.release() # counter: 0->1
+>>> sema.acquire(blocking=True, timeout=1) # counter: 1->0
+True
+```
+
+A normal *Semaphore* object can be released before any *acquire()* calls, which is unreasonable and even dangerous sometimes. Say we have a database server which supports a maximum connection of 5, if we invoke *release()* before any connection, now 6 connections may be established, and a server crash is potential to occur.
+
+So, [*threading.BoundedSemaphore*](https://docs.python.org/3/library/threading.html) is more frequently used. It ensures the counter value doesn't exceed its initial value. If it does, *ValueError* is raised.
+
+```python
+# use BoundedSemaphore to protect a poor database server
+maxconnections = 5
+pool_sema = threading.BoundedSemaphore(value=maxconnections)
+
+# in each thread, acquire the semaphore before connecting
+def worker():
+    with pool_sema:
+        conn = connectdb()
+        try:
+            # use connection ...
+        finally:
+            conn.close()
+```
+
+[*threading.Event*](https://docs.python.org/3/library/threading.html#threading.Event) is one of the simplest mechanism for communication between threads: one thread signals an event and other threads wait for it. Internally, an *Event* object is a boolean flag that is initialized as *False*.
+
+```python
+# pseudocode
+event = threading.Event()
+
+def image_downloader(link, event):
+    img = download_from(link)
+    time.sleep(3.0) # simulate network delay
+    event.set()
+    
+def image_processor(event):
+    event.wait() # block until event is set
+    img = read_local_image()
+    process_image(img)
+```
+
+[*threading.Timer*](https://docs.python.org/3/library/threading.html#threading.Timer) invokes a given *function* after *interval* seconds have passed.
+
+```python
+def hello():
+    print("hello timer")
+
+t = Timer(5.0, hello)
+t.start() # after 5 seconds, "hello timer will be printed"
+```
+
+[*threading.Barrier*](https://docs.python.org/3/library/threading.html#threading.Barrier) is a simple synchronization primitive for use by a fixed number threads that need to wait for each other.
+
+About **Daemons**. Python waits for non-daemonic threads to complete before termination, while kills threads that are daemons when the program is exiting. Calling *Thread.join()* method on a daemon thread, however, makes the program waits for it to complete. ([source](https://realpython.com/intro-to-python-threading/#starting-a-thread)) see section *Daemon Threads*. (*threading.Thread* class has a boolean argument named *daemon* to set this attribute.) 
+
+It is remarkable that despite functions run in parallel with the help of this module, internally they still run in a single-threaded way rather than a concurrent way, due to the limit of [Python Global Interpreter Lock (GIL)](https://realpython.com/python-gil/), which only allows one thread to acquire the interpreter lock at a time. This feature may cause trouble to CPU-bound multi-threaded programs. Here is what the official doc says about this feature:
+
+> If you want your application to make better use of the computational resources of multi-core machines, you are advised to use [`multiprocessing`](https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing) or [`concurrent.futures.ProcessPoolExecutor`](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ProcessPoolExecutor). However, threading is still an appropriate model if you want to run multiple I/O-bound tasks simultaneously.
+
+# Multiprocessing | Process-based parallelism
 
 
 
-# Multiprocessing
+# Concurrent.Futures | Launchinig parallel tasks
 
 
 
-# Concurrent
+# Producer-Consumer Threading
 
 
 
@@ -555,7 +720,7 @@ Write event logging to a target file:
 >>> logging.error("can\'t think of anything else to write")
 >>> 
 
-# $ cat example.log 
+# $ cat example.log
 # DEBUG:root:now this file example.log is open
 # WARNING:root:be cautious not to write illegal things
 # ERROR:root:can't think of anything else to write
