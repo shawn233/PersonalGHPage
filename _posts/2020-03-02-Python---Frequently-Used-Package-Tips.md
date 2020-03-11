@@ -26,13 +26,15 @@ tags:
 
 
 
+**NOTICE**: I'm having some formatting problem with this post. Sample codes look like a mess on this page. Click [here](https://github.com/shawn233/shawn233.github.io/blob/master/_posts/2020-03-02-Python---Frequently-Used-Package-Tips.md) (Github source file) to have a better reading experience.
+
 As a dedicated Python supporter, I use Python to handle miscellaneous programming tasks every day, from writing a simple scipt to modify file extension (e.g., .txt -> .md) in batches, to running neural network models.
 
 A common dilemma for crazy Python programmers like me, is to remember how to use uncountable packages. For one task, I learned to use numpy, matplotlib, and scipy; for another task, I turned to the docs of pandas, pillow and pytorch.  But when I get back to matplotlib, I have to read the docs again because when I stop using a package, I tend to forget quickly. 
 
 Now you see why I intend to write this post. In this post, I'll note down the core functions of frequently used packages, storing my knowledge about a package in the most compact way while I still can.
 
-This post is helpful to me, bring up some of my faded memories. If you are interested, go ahead and read it! You'll surely find the part that works for you.
+This post is helpful to me, bringing up some of my faded memories. If you are interested, go ahead and read it! You'll surely find the part that works for you.
 
 # OS.Path | Common pathname manipulations 
 
@@ -630,7 +632,7 @@ t.start() # after 5 seconds, "hello timer will be printed"
 
 About **Daemons**. Python waits for non-daemonic threads to complete before termination, while kills threads that are daemons when the program is exiting. Calling *Thread.join()* method on a daemon thread, however, makes the program waits for it to complete. ([source](https://realpython.com/intro-to-python-threading/#starting-a-thread)) see section *Daemon Threads*. (*threading.Thread* class has a boolean argument named *daemon* to set this attribute.) 
 
-It is remarkable that despite functions run in parallel with the help of this module, internally they still run in a single-threaded way rather than a concurrent way, due to the limit of [Python Global Interpreter Lock (GIL)](https://realpython.com/python-gil/), which only allows one thread to acquire the interpreter lock at a time. This feature may cause trouble to CPU-bound multi-threaded programs. Here is what the official doc says about this feature:
+It is remarkable that despite that functions seem to run in parallel with the help of this module, internally they still run in a single-threaded way rather than a concurrent way, due to the limit of [Python Global Interpreter Lock (GIL)](https://realpython.com/python-gil/), which only allows one thread to acquire the interpreter lock at a time. This feature may cause trouble to CPU-bound multi-threaded programs. Here is what the official doc says about this feature:
 
 > If you want your application to make better use of the computational resources of multi-core machines, you are advised to use [`multiprocessing`](https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing) or [`concurrent.futures.ProcessPoolExecutor`](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ProcessPoolExecutor). However, threading is still an appropriate model if you want to run multiple I/O-bound tasks simultaneously.
 
