@@ -642,7 +642,134 @@ It is remarkable that despite that functions seem to run in parallel with the he
 
 # Concurrent.Futures | Launchinig parallel tasks
 
+[concurrent.futures](https://docs.python.org/3/library/concurrent.futures.html) module provides a high-level interface for asynchronously executing callables.
 
+A *ThreadPoolExecutor* (*ProcessPoolExecutor*) manages a pool of threads (processes) as workers. The maximum number of parallel workers is bounded by the *max_workers* argument, default set to `min(32, os.cpu_count()+4)`.
+
+```python
+from concurrent.futures import ThreadPoolExecutor
+executor = ThreadPoolExecutor(max_workers=5)
+```
+
+With a *ThreadPoolExecutor* object named *executor*, you can provision it with multiple tasks (function calls), and then the executor will automatically schedule these tasks and assign them to workers. Each *submit()* call returns a [*Future*](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future) object, which allows you to control the execution status. 
+
+```python
+import time
+def wait_a_while(seconds, index):
+    '''
+    say we want threads to wait for a while
+    '''
+    print("[future {}] sleeping for {} seconds ...".format(index, seconds))
+    time.sleep(seconds)
+    print("[future {}] waken up after {} seconds".format(index, seconds))
+    return seconds
+
+# provision tasks
+future_1 = executor.submit(wait_a_while, 5.0, 1)
+future_2 = executor.submit(wait_a_while, 2.0, 2)
+
+# wait for returns
+print("[  main  ] future 1 returns {}".format(future_1.result()))
+print("[  main  ] future 2 returns {}".format(future_2.result()))
+
+# free resources after current pending futures complete
+executor.shutdown(wait=True)
+print("all done!")
+```
+
+Output:
+
+```
+[future 1] sleeping for 5.0 seconds ...
+[future 2] sleeping for 2.0 seconds ...
+[future 2] waken up after 2.0 seconds
+[future 1] waken up after 5.0 seconds
+[  main  ] future 1 returns 5.0
+[  main  ] future 2 returns 2.0
+all done!
+```
+
+We can see from the output that although future 2 woke up before future 1 did, in the main thread future 1 still blocked future 2 with its *result()* call until it returned. Also, *shutdown()* method with *wait* argument set to *True* made the main thread wait for two futures to finish. 
+
+Now let's make things a little more complex by using an alternative method to provisioning tasks, named [*map()*](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Executor.map), and a context manager (*with* statement) to get a better control over unexpected exceptions during execution.
+
+Note that a context manager looks like:
+
+```python
+with ThreadPoolExecutor(max_workers=5) as executor:
+    # ... use the executor ...
+```
+
+is equivalent to
+
+```python
+executor = ThreadPoolExecutor(max_workers=5)
+try:
+    # ... use the executor ...
+finally:
+    executor.shutdown(wait=True)
+```
+
+Here is an example using *map()* method to handle a list of tasks.
+
+```python
+from concurrent.futures import ThreadPoolExecutor
+
+def my_pow(base, power):
+    '''
+    say we want threads to run a stupid power function
+    '''
+    result = 1
+    for i in range(power):
+        result = result * base
+    return result
+
+base_list = [1, 2, 3, 4, 5, 6]
+power_list = [2, 3, 4, 4, 3, 2]
+with ThreadPoolExecutor(max_workers=5) as executor:
+    # map(callable, arg1_list, arg2_list, ...)
+    result_list = executor.map(my_pow, base_list, power_list)
+print(list(result_list))
+```
+
+Output:
+
+```
+[1, 8, 81, 256, 125, 36]
+```
+
+[*concurrent.futures.as_completed()*](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.as_completed) is also useful to handle a task list, but its usage is not included in my post at present. Find more about it on the official doc. I'll only cover an example of using *as_completed()* function.
+
+```python
+import concurrent.futures
+import urllib.request
+
+URLS = ['http://www.foxnews.com/',
+        'http://www.cnn.com/',
+        'http://europe.wsj.com/',
+        'http://www.bbc.co.uk/',
+        'http://some-made-up-domain.com/']
+
+# Retrieve a single page and report the URL and contents
+def load_url(url, timeout):
+    with urllib.request.urlopen(url, timeout=timeout) as conn:
+        return conn.read()
+
+# We can use a with statement to ensure threads are cleaned up promptly
+with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    # Start the load operations and mark each future with its URL
+    future_to_url = {executor.submit(load_url, url, 60): url for url in URLS}
+    for future in concurrent.futures.as_completed(future_to_url):
+        url = future_to_url[future]
+        try:
+            data = future.result()
+        except Exception as exc:
+            print('%r generated an exception: %s' % (url, exc))
+        else:
+            print('%r page is %d bytes' % (url, len(data)))
+```
+
+(**NOTICE** I think I haven't really understood this example. Maybe I'm writing something wrong here. Please read with caution.) You can also find this example [here](https://docs.python.org/3/library/concurrent.futures.html#threadpoolexecutor-example). This example offers us a fantastic way to mark the connections between futures and their corresponding argument. Since the concurrent.futures module runs threads asychronously and does not guarantee to return in order, without connections between futures and arguments, sometimes we have no idea which arguments the returned future results come from. So this is when what the example shows us comes in handy.
 
 # Producer-Consumer Threading
 
