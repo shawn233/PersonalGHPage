@@ -855,9 +855,51 @@ Write event logging to a target file:
 # ERROR:root:can't think of anything else to write
 ```
 
+# Itertools | Functions creating iterators for efficient looping
 
+[itertools module](https://docs.python.org/3/library/itertools.html) implements a number of iterator building blocks.
 
- 
+First we need to clarify the concept of [iterable](https://docs.python.org/3/glossary.html#term-iterable). The official doc describes as an object that is capable of returning its members one at a time. Typical iterables:
 
-# Itertools
+- (all [sequence](https://docs.python.org/3/glossary.html#term-sequence) types): list, str, tuple, range, ...
+- (some non-sequence types): dict, file objects, ...
+- any user-defined classes with an [*\_\_iter\_\_()*](https://docs.python.org/3/reference/datamodel.html#object.__iter__) method or with a [*\_\_getitem()\_\_*](https://docs.python.org/3/reference/datamodel.html#object.__getitem__) method that implements [Sequence](https://docs.python.org/3/glossary.html#term-sequence) semantics. (better check out these concepts in the official doc, below is my personal simple summary)
+  Generally, the *\_\_iter\_\_()* method returns a new [iterator](https://docs.python.org/3/glossary.html#term-iterator) that can iterate over all the objects in the container for sequence-like containers, or iterate over the keys for mapping-based containers (such as dict), and the *\_\_getitem()\_\_* method implements access to elements given integer keys or slice objects.
+
+[**Iterables**](https://docs.python.org/3/glossary.html#term-iterable) are typically used in a [for](https://docs.python.org/3/reference/compound_stmts.html#for) loop and many other places where a sequence is needed, such as *zip()*, *map()*, and *enumerate()*. In most cases, these statements automatcially call the *iter()* function to obtain an iterator from these iterables.
+
+For an [**iterator**](https://docs.python.org/3/glossary.html#term-iterator), the most important method is its [*\_\_next()\_\_* method](https://docs.python.org/3/library/stdtypes.html#iterator.__next__), which returns the next item in an iterable.
+
+Alright, with adequate knowledge of iterables and iterators, let's dive into the functions provided by the itertools module. I believe you'll find them helpful and convenient.
+
+[*islice()* method](https://docs.python.org/3/library/itertools.html#itertools.islice) makes an iterator that returns selected elements from a given *iterable*. It has two signatures:
+
+- *itertools.islice(iterable, stop)*: returns an iterator over *iterable*[:stop]
+- *itertools.islice(iterable, start, stop[, step])*: iterator over *iterable*[start:stop:step]
+
+```python
+>>> from itertools import islice
+>>> iterable = "ABCDEFG"
+>>> list(islice(iterable, 2))
+['A', 'B']
+>>> list(islice(iterable, 2, 4))
+['C', 'D']
+>>> list(islice(iterable, 2, None))
+['C', 'D', 'E', 'F', 'G']
+>>> list(islice(iterable, 2, None, 2))
+['C', 'E', 'G']
+```
+
+[*starmap()* method](https://docs.python.org/3/library/itertools.html#itertools.starmap) makes an iterator that computes a given *function* using arguments obtained from a given *iterable*. Comparing with [*map()*](https://docs.python.org/3/library/functions.html#map) for which *function* arguments are organized as several iterables, one iterable for an argument, the *starmap()* method is used when *function* arguments are organized as a list of tuples. See the following example.
+
+```python
+>>> from itertools import starmap
+>>> def my_mul(a, b):
+...     return a*b
+... 
+>>> list(map(my_mul, [1, 2, 3], [2, 3, 4]))
+[2, 6, 12]
+>>> list(starmap(my_mul, [(1, 2), (2, 3), (3, 4)]))
+[2, 6, 12]
+```
 
