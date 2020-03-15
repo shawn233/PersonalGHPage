@@ -143,6 +143,8 @@ Besides the mentioned functionalities, [os.path module](https://docs.python.org/
 
 # OS | Miscellaneous operating system interfaces
 
+## Directory Traverse
+
 Here are a few frequently used methods that support traversing directories.
 
 - [*os.walk()*](https://docs.python.org/3/library/os.html#os.walk): display a directory tree, expanding all subdirectories, recursively
@@ -247,7 +249,11 @@ The third method is *os.walk()*. It generates the whole directory tree, expandin
 
 ```
 
+# Shutil
 
+[*copyfile()*]
+
+[*rmtree()*]
 
 # Fileinput | Iterate over lines from multiple input streams
 
@@ -397,6 +403,185 @@ Although the examples above may look confusing, in most cases we only need to re
 
 # PyTorch
 
+```python
+import torch
+import torch.nn as nn
+import torch.nn.Functional as F
+```
+
+## Loss Computation
+
+[*torch.nn.Softmax*](https://pytorch.org/docs/stable/nn.html#torch.nn.Softmax) class applies the softmax function to rescale Tensors
+
+- output shape = input shape
+- In the output Tensor, along a given dimension *dim*, all element values lie in the range [0, 1] and sum to 1
+
+$$
+\text{Softmax}(x_i) = \frac{\exp(x_i)}{\sum_{j=1}^n\exp(x_j)}
+$$
+
+```python
+>>> layer = nn.Softmax(dim=1) # along dim 1 elements sum to 1
+>>> input = torch.randn(2, 3)
+>>> input
+tensor([[ 1.8528,  1.2640, -0.0431],
+        [-0.9120, -1.7943, -0.6436]])
+>>> output = layer(input)
+>>> output
+tensor([[0.5864, 0.3255, 0.0881],
+        [0.3674, 0.1520, 0.4805]])
+```
+
+[*torch.nn.NLLLoss*](https://pytorch.org/docs/stable/nn.html#torch.nn.NLLLoss) is the **negative log likelihood** loss.
+
+[*torch.nn.CrossEntropyLoss*](https://pytorch.org/docs/stable/nn.html#torch.nn.CrossEntropyLoss) combines *nn.LogSoftmax* and *nn.NLLLoss* in one single class. Now we discuss how to use these two loss criterions to compute loss.
+
+Say we have an image classification model that tells whether an image is a cat, dog, or pig. Now, we train this net with a set of images, within which we randomly pick three, and get the following extracted features (each line represents an image):
+
+```python
+>>> pred
+tensor([[-1.0395,  1.1958, -0.3859],
+        [-1.9872, -0.2764, -1.6573],
+        [ 2.1350, -0.2390,  0.7698]])
+```
+
+We know that the labels for these images are [cat, dog, pig], represented as [0, 1, 2] with numbers.
+
+```python
+target = torch.tensor([0, 1, 2])
+```
+
+Since *pred* is the direct output of the last layer, its values don't represent probabilities, but will do after getting processed by the softmax layer.
+
+Now let's directly compute the loss.
+
+```python
+>>> # 1. process features to probabilities by softmax
+>>> # set dim to 1 because we want each line sums up to 1
+>>> softmax = nn.Softmax(dim=1)
+>>> # the net considers images as [dog, dog, cat]
+>>> softmax(pred)
+tensor([[0.0815, 0.7619, 0.1567],
+        [0.1262, 0.6983, 0.1755],
+        [0.7416, 0.0691, 0.1894]])
+>>> # 2. get log likelihood
+>>> pred_ll = torch.log(softmax(pred))
+>>> pred_ll
+tensor([[-2.5073, -0.2720, -1.8537],
+        [-2.0699, -0.3591, -1.7400],
+        [-0.2990, -2.6729, -1.6641]])
+>>> # 3. obtain log likelihoods of each ground truth label
+>>> truth_ll = pred_ll[torch.arange(3), target]
+>>> truth_ll
+tensor([-2.5073, -0.3591, -1.6641])
+>>> # 4. the loss is
+>>> torch.mean(-truth_ll)
+tensor(1.5102)
+```
+
+Remark that loss becomes zero when and only when probabilities, i.e. softmax(pred), become
+
+```python
+>>> truth
+tensor([[1., 0., 0.],
+        [0., 1., 0.],
+        [0., 0., 1.]])
+```
+
+Now we see computing loss is actually quite simple. If we summary the codes above with one line, we get
+
+```python
+loss = torch.mean(
+    -torch.log(
+        F.softmax(
+            pred,
+            dim=1
+        )
+    )[
+        torch.arange(pred.size()[0]),
+        target
+    ]
+)
+```
+
+Actually because I use *torch.nn.functional.softmax* here, this piece of code only works for 2 dimension cases. With a wider application, pyTorch makes this process quite simple and flexible by pre-defining many types of loss creiterions. For example, we can get the same loss with the following methods.
+
+```python
+>>> # 1. apply NLL loss to log likehood 
+>>> nllloss = nn.NLLLoss()
+>>> nllloss(pred_ll, target)
+tensor(1.5102)
+>>> # 2. apply log Softmax and then NLL loss to net output 
+>>> logsoftmax = nn.LogSoftmax(dim=1)
+>>> nllloss(logsoftmax(pred), target)
+tensor(1.5102)
+>>> # 3. directly apply Cross Entropy loss to net output
+>>> crossentropy = nn.CrossEntropyLoss()
+>>> crossentropy(pred, target)
+tensor(1.5102)
+```
+
+Also remark all the criterions mentioned above have corresponding functions in the *torch.nn.functional* module. Specifically:
+
+- *nn.Softmax*: *F.softmax()*
+- *nn.LogSoftmax*: *F.log_softmax()*
+- *nn.NLLLoss*: *F.nll_loss()*
+- *nn.CrossEntropyLoss*: *F.cross_entropy()*
+
+## Model Restoration
+
+[official doc](https://pytorch.org/docs/stable/notes/serialization.html): simple but not enough
+
+```python
+torch.save(the_model.state_dict(), PATH)
+# later
+the_model = TheModelClass(*args, **kwargs)
+the_model.load_state_dict(torch.load(PATH))
+```
+
+Saving and restoring models mainly rely on two functions defined in the torch module: (1) [*torch.save()*](https://pytorch.org/docs/stable/torch.html#torch.save); (2) [*torch.load()*](https://pytorch.org/docs/stable/torch.html#torch.load).
+
+[*torch.save()*](https://pytorch.org/docs/stable/torch.html#torch.save) saves an object (any Python object) to a disk file. It's remarkable that any object can be saved with this method.
+
+```python
+>>> fpath = "tmp.pt"
+>>> a = [0, 1.34, "hello world", ("a", "b")]
+>>> torch.save(a, fpath)
+```
+
+[*torch.load()*](https://pytorch.org/docs/stable/torch.html#torch.load) loads an object saved with *torch.save()* from a file.
+
+```python
+>>> torch.load(fpath)
+[0, 1.34, 'hello world', ('a', 'b')]
+```
+
+Therefore, torch module actually provides a universal set of methods to save and later restore any objects. Well, at most times, they are used for saving model parameters, but with these methods we are allowed to save in our own ways.
+
+Here I provide a clear way to save parameters along with other model information in one file with a *dict*. [reference](https://zhuanlan.zhihu.com/p/38056115)
+
+```python
+torch.save(
+    {
+        'epoch': epoch+1,
+        'state_dict': model.state_dict(),
+        'best_loss': min_loss,
+        'optimizer': optimizer.state_dict(),
+        'alpha': loss.alpha, # no idea what it means
+        'gamma': loss.gamma
+    },
+    meaningful_path_with_train_info
+)
+
+model_ckpt = torch.load(the_path)
+model.load_state_dict(model_ckpt['state_dict'])
+optimizer.load_state_dict(model_ckpt['optimizer'])
+```
+
+
+
+# Pillow
+
 
 
 # Argparse | Parse for command-line options, arguments and sub-commands
@@ -479,7 +664,7 @@ print(args.seperator)   # **
 import threading
 ```
 
-(Using the threading module usually includes a large amount codes, such as worker definition, thread creation, and main thread implementation. So due to restricted space, sample codes in this section are mostly provided as pseudocodes. But don't worry, these codes are fully commented and clear enough to get the idea. For more curious readers, I also uploaded some [realistic samples](https://github.com/shawn233/shawn233.github.io/tree/master/_posts/related-codes/threading-samples) that you can play with.)
+(Using the threading module usually implies a lot of codes, including worker definition, thread creation, and main thread implementation. So due to restricted space, sample codes in this section are mostly provided as pseudocodes. But don't worry, these codes are fully commented and clear enough to get the idea. For more curious readers, I also uploaded some [realistic samples](https://github.com/shawn233/shawn233.github.io/tree/master/_posts/related-codes/threading-samples) that you can play with.)
 
 [*threading.Thread*](https://docs.python.org/3/library/threading.html#threading.Thread) objects are created to actually work as threads. There are mainly two ways to designate the routine that the thread executes.
 
@@ -902,4 +1087,16 @@ Alright, with adequate knowledge of iterables and iterators, let's dive into the
 >>> list(starmap(my_mul, [(1, 2), (2, 3), (3, 4)]))
 [2, 6, 12]
 ```
+
+# Collections
+
+# Datetime
+
+# Psutil
+
+# Chardet
+
+# Requests
+
+Reference: [Real Python](https://realpython.com/python-requests/)
 
