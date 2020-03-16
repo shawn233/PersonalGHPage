@@ -129,7 +129,7 @@ echo $val
 
 - `$(( ))` is an abbreviation of `` `expr ` ``.
 
-- *expr* is a command-line program which evaluates numerical expressions. It supports common operators such as +, -, \*, /, %, &, |, <, <=, >, >=, regular expressions, string matching, and string indexing. In a shell environment, we must use spaces to separate each term. Also, some operators need to be escaped such as `\*`, `\<`, and `\( \)`. See `man expr` for more info.
+- *expr* is a command-line program which evaluates numerical expressions. It supports common operators such as +, -, \*, /, %, &, \|, <, <=, >, >=, regular expressions, string matching, and string indexing. In a shell environment, we must use spaces to separate each term. Also, some operators need to be escaped such as `\*`, `\<`, and `\( \)`. See `man expr` for more info.
 
   ```bash
   expr 1 + 2       # = 3
