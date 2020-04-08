@@ -151,7 +151,7 @@ Here are a few frequently used methods that support traversing directories.
 - [*os.scandir()*](https://docs.python.org/3/library/os.html#os.scandir): iterate over all entries (files and subdirectories) in a given directory
 - [*os.listdir()*](https://docs.python.org/3/library/os.html#os.listdir): return a list containing names of all entries in a given directory
 
-Let's say we have a folder that stores all of our studying materials, named `lectures`, in which we have the following folders and files.
+Let's say we have a folder that stores all of our school materials, named `lectures`, in which we have the following folders and files.
 
 ```bash
 $ tree lectures/
@@ -174,7 +174,7 @@ lectures/
 7 directories, 7 files
 ```
 
-Now we access the `lectures` folder, with three different *os* methods.
+Now I'll show you three ways to traverse the `lectures` folder.
 
 The first method is *os.listdir()*. It returns a list of all entry names in the first layer of the directory tree.
 
@@ -185,7 +185,7 @@ The first method is *os.listdir()*. It returns a list of all entry names in the 
 ['Programming', 'syllabus.txt', 'Maths', 'English']
 ```
 
-The second method is *os.scandir()*. It returns an iterator of [*os.DirEntry*](https://docs.python.org/3/library/os.html#os.DirEntry) objects corresponding to all entries in the first layer of the directory tree. So the results should be similar to *os.listdir()* to some extent. *stat* info can also be accessed by  *DirEntry* objects.
+The second method is *os.scandir()*. It returns an iterator of [*os.DirEntry*](https://docs.python.org/3/library/os.html#os.DirEntry) objects corresponding to all entries in the first layer of the directory tree. So the results are similar to *os.listdir()* to some extent. *stat* info can also be accessed by  *DirEntry* objects.
 
 ```python
 >>> import os
@@ -213,7 +213,9 @@ English
   is_dir True
 ```
 
-The third method is *os.walk()*. It generates the whole directory tree, expanding all subdirectories. It is likely a higher-level method which internally calls *os.scandir()*. By assigning the parameter *topdown* as `True`, this method runs a root-first traverse on the directory tree. The official docs say the *dirnames* can be changed in-place, e.g., *del* the *dirnames* list may prune the subsequent visits to subdirectories in this list.
+The third method is *os.walk()*. It generates the whole directory tree, expanding all subdirectories. It is like a higher-level method which internally calls *os.scandir()*.
+
+By setting the parameter *topdown* as `True`, this method runs a root-first traverse on the directory tree. The official docs say the *dirnames* can be changed in-place, e.g., *del* the *dirnames* list may prune the subsequent visits to subdirectories in this list.
 
 ```python
 >>> import os
@@ -291,9 +293,86 @@ argv[4]: d
 - *sys.stdout* is used for the output of *print()* and [expression](https://docs.python.org/3/glossary.html#term-expression) statements and for the prompts of *input()*;
 - The interpreter's own prompts and its error messages go to *sys.stderr*.
 
+# Zipfile | Work with ZIP archives
+
+[zipfile module](https://docs.python.org/3/library/zipfile.html) allows Python programmers to deal with .zip archives. It supports the following operations:
+
+- read an existing ZIP file: `mode='r'`.
+- create and write a new ZIP file (truncate if file exists): `mode='w'`.
+- append to and existing ZIP file: `mode='a'`.
+- exclusively create and write a new file (raise a *FileExistError* if file exists): `mode='x'`.
+
+```python
+import zipfile
+```
+
+Say I have a bunch of text files organized in the structure below:
+
+```bash
+$ tree .
+.
+├── bar.txt
+├── first
+│   ├── second
+│   │   └── yaa.txt
+│   └── whoo.txt
+└── foo.txt
+```
+
+Now I would like to compress `bar.txt` and `./first` folder into a ZIP file named `archive.zip`. This is how I will do it:
+
+```python
+>>> with zipfile.ZipFile("archive.zip", "w", compression=zipfile.ZIP_DEFLATED) as myzip:
+...     myzip.write("bar.txt")
+...     for root, dirs, files in os.walk("./first"):
+...         for filename in files:
+...             myzip.write(os.path.join(root, filename))
+...
+>>> with zipfile.ZipFile("archive.zip", "r") as myzip:
+...     myzip.printdir()
+... 
+File Name                    Modified             Size
+bar.txt                  2020-03-19 13:41:54         9
+first/whoo.txt           2020-03-19 13:41:06         8
+first/second/yaa.txt     2020-03-19 13:41:20         9
+```
+
+- Context manager (*with* statement) here is equivalent to
+
+  ```python
+  myzip = zipfile.ZipFile("archive.zip", "w")
+  # ... my.write(file) ...
+  myzip.close()
+  ```
+
+- The *compression* argument indicates the ZIP compression method to use. By default, its value is [*zipfile.ZIP_STORED*](https://docs.python.org/3/library/zipfile.html#zipfile.ZIP_STORED), which doesn't compress at all and results in an uncompressed archive. By setting *compression* as [*zipfile.ZIP_DEFLATED*](https://docs.python.org/3/library/zipfile.html#zipfile.ZIP_DEFLATED), we choose the usual ZIP compression method. If we use the *ZIP_DEFLATED* method, then we can further set the *compressionlevel* argument to control the compression level.
+
+- This example is just for demonstration. In practice, it is unwise to compress a lot of files of small sizes, because it will almost likely result in a ZIP file whose size is much larger than the total file sizes. (In this example, I actually got a ZIP file of size 362 bytes.)
+
+We have already created a ZIP file named `archive.zip`. Say if we would like to add another text file to the archive, called `foo.txt`, we can use the append (`'a'`) mode.
+
+```python
+>>> with zipfile.ZipFile("archive.zip", "a", compression=zipfile.ZIP_DEFLATED) as myzip:
+...     myzip.write("foo.txt")
+...     myzip.printdir()
+... 
+File Name                    Modified             Size
+bar.txt                  2020-03-19 13:41:54         9
+first/whoo.txt           2020-03-19 13:41:06         8
+first/second/yaa.txt     2020-03-19 13:41:20         9
+foo.txt                  2020-03-19 13:41:40         9
+>>>
+```
+
+Now, the ZIP file `archive.zip` contains the complete content and structure of our files. We can decompress it and restore all these files, by simply changing to the read (`'r'`) mode and invoking the [*extract()*](https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile.extract) / [*extractall()*](https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile.extractall) methods.
+
 # Numpy
 
+```python
+import numpy as np
+```
 
+## Combinig arrays
 
 [*concatenate()* method](https://docs.scipy.org/doc/numpy/reference/generated/numpy.concatenate.html) joins a sequence of arrays along an existing axis.
 
@@ -339,8 +418,6 @@ For a sequence of *x* arrays that are *(m, n)* shaped, the output shape for diff
 - *axis=2* (also written as *axis=-1*): *(m, n, x)*
 
 ```python
->>> import numpy as np
->>>
 >>> num1 = np.zeros(shape=(3, 4), dtype=np.int)
 >>> num2 = np.ones(shape=(3, 4), dtype=np.int)
 >>>
@@ -391,7 +468,31 @@ shape: (3, 4, 2)
 
 Although the examples above may look confusing, in most cases we only need to remember that if we want to create a new axis, we should use *stack()* instead of *concatenate()*. 
 
+## Sampling
 
+[*choice()*](https://docs.scipy.org/doc/numpy-1.15.0/reference/generated/numpy.random.choice.html#numpy-random-choice) method in the numpy.random module generates a random sample from a given 1-D array.
+
+```python
+>>> # sample from a range
+>>> np.random.choice(8, size=8, replace=True)
+array([1, 0, 1, 7, 4, 2, 3, 5])
+>>> np.random.choice(8, size=8, replace=False)
+array([7, 5, 3, 0, 4, 1, 2, 6])
+>>> np.random.choice(8, size=(2, 3), replace=True)
+array([[0, 4, 2],
+       [6, 4, 7]])
+>>>
+>>> # sample from an array
+>>> friends = ['cat', 'dog', 'rabbit', 'bunny']
+>>> np.random.choice(friends, size=3, replace=False)
+array(['dog', 'cat', 'bunny'], dtype='<U6')
+>>> np.random.choice(friends, size=3, replace=True)
+array(['bunny', 'bunny', 'cat'], dtype='<U6')
+```
+
+- If the first parameter is an *int* such as 8, samples are generated from the range `np.arange(8)`, which is a list, `[0, 1, 2..., 7]`.
+- parameter *size* indicates the output shape.
+- parameter *replace* indicates whether the sample is with or without replacement.
 
 # Pandas
 
@@ -407,6 +508,8 @@ Although the examples above may look confusing, in most cases we only need to re
 import torch
 import torch.nn as nn
 import torch.nn.Functional as F
+from torch.utils.data import Dataset, Dataloader
+from torchvision import transforms
 ```
 
 ## Loss Computation
@@ -578,6 +681,65 @@ model.load_state_dict(model_ckpt['state_dict'])
 optimizer.load_state_dict(model_ckpt['optimizer'])
 ```
 
+## Dataset loading utility
+
+```python
+torch.utils.data.DataLoader(
+    dataset, 
+    batch_size=1, 
+    shuffle=False,
+    sampler=None, 
+    batch_sampler=None, 
+    num_workers=0, 
+    collate_fn=None,
+    pin_memory=False, 
+    drop_last=False, 
+    timeout=0,
+    worker_init_fn=None
+)
+```
+
+- *dataset*: a map/iterable-style dataset
+- *batch_size*: size of each batch
+- *shuffle*: set as *False* to construct a sequential sampler, or *True* to construct a shuffled sampler
+- *sampler*: a user-specified custom sampler that is different from the sequential or shuffled sampler.
+- *batch_sampler*: a custom sampler that yields a list of batch indices at a time.
+- *num_workers*: default to 0 (single-process data loading). Setting it as a positive value will turn on multi-process data loading.
+- *collate_fn*: a callable object to collate lists of samples into batches (collate: to assemble in proper order).
+- *pin_memory*: set as *True* to put the fetched data Tensors in pinned (page-locked) memory, and thus enable faster data transfer to CUDA-enabled GPUs.
+- *drop_last*: True to drop out the last incomplete batch.
+
+In the most common case, when we use [**automatic batching**](https://pytorch.org/docs/stable/data.html#automatic-batching-default), the data loader roughly works like:
+
+```python
+for indices in batch_sampler:
+    yield collate_fn([dataset[i] for i in indices])
+```
+
+- Since the loader uses a batch sampler, so for each time the sampler returns a list of indices.
+
+When your model is designed to process single samples, or when each data sample is required to be processed independently, you can [disable automatic batching](https://pytorch.org/docs/stable/data.html#disable-automatic-batching) by setting both *batch_size* and *batch_sampler* to *None*. Then the data loader works like:
+
+```python
+for index in sampler:
+    yield collate_fn(dataset[index])
+```
+
+Concepts
+
+- Dataset types
+  - [Map-style datasets](https://pytorch.org/docs/stable/data.html#map-style-datasets): subclass of [*torch.utils.data.Dataset*](https://pytorch.org/docs/stable/data.html#torch.utils.data.Dataset) that implements *\_\_getitem\_\_()* and *\_\_len\_\_()* protocols. Such a dataset supports sample accessing by indexing.
+  - [Iterable-style datasets](https://pytorch.org/docs/stable/data.html#iterable-style-datasets): subclass of [*torch.utils.data.IterableDataset*](https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset) that implements the *\_\_iter\_\_()* protocol. Such a dataset, when called `iter(dataset)`, returns an iterable stream of data reading from a database, a remote server, or even logs generated in real time.
+- [Sampler](https://pytorch.org/docs/stable/data.html#torch.utils.data.Sampler): an iterable object over the **indices** to datasets, not the data samples themselves.
+
+Examples
+
+```python
+
+```
+
+## Image transformation
+
 
 
 # Pillow
@@ -590,7 +752,7 @@ optimizer.load_state_dict(model_ckpt['optimizer'])
 import argparse
 ```
 
-argparse is a frequently used package that supports convenient management of parameters passed from the command line. It supports several types of parameters, including:
+argparse is a frequently used package that supports convenient management of arguments passed from the command line. It supports several types of arguments, including:
 
 - positional arguments: users are obligatory to provide these arguments to run a program 
 - optional arguments: users may choose to provide these arguments out of their personal intentions
@@ -623,7 +785,9 @@ $ python foo.py O --number 3 --sep RERE
 OREREOREREO
 ```
 
-To start with defining parameters, create an [*ArgumentParser*](https://docs.python.org/3.7/library/argparse.html#argumentparser-objects) object. You may add a proper description to help users understand your program.
+## Simple options
+
+To start with defining argument options, create an [*ArgumentParser*](https://docs.python.org/3.7/library/argparse.html#argumentparser-objects) object. You may add a proper description to help users understand your program.
 
 ```python
 parser = argparse.ArgumentParser(description="a simple scipt to repeat words")
@@ -655,6 +819,70 @@ print(args.word)        # harry
 print(args.number)      # 3
 print(args.seperator)   # **
 ```
+
+Now, let's come to two other use cases of argparse module.
+
+## Boolean option
+
+A boolean option takes no value in the command line. For example, in most commands we have a `-v / --verbose` option. If we use this option, command execution will output more information than usual.
+
+How to implement this type of option? In the *add_argument()* method, we can pass a parameter named [*action*](https://docs.python.org/zh-cn/3/library/argparse.html#action):
+
+```python
+>>> parser.add_arguemnt("-v", "--verbose", help="more info",
+                   action="store_true")
+```
+
+Since this argument is set with the `store_true` *action*, it takes the following default values:
+
+- *dest*: verbose
+- *default*: False
+
+In another word, if this option is not used, `args.verbose` defaults to *False*.
+
+```python
+>>> args = parser.parse_args([])
+>>> args.verbose
+False
+```
+
+Instead, if it is, we have
+
+```python
+>>> args = parser.parse_args("-v".split())
+>>> args.verbose
+True
+```
+
+Now we can implement a boolean option with the help of *action* parameter. Actually, this parameter can take more values, as listed below.
+
+- *action*=`store`: default *action*. The argument holds a value taken from command line.
+- *action*=`store_false`: The argument takes no value from the command line. If the option is used, argument is set to False, otherwise True.
+- *action*=`store_const`: The argument works with another parameter named *const*. While taking no value from the command line, the argument is set to the value of *const* if the option is used. 
+
+## Argument list
+
+Sometimes we would like to pass a list of values to an argument option. There are more than one ways to implement this, but here I only provide one that I think as the most convenient.
+
+```python
+>>> parser.add_argument("-l", "--list", help="integer list",
+                       nargs="+", type=int, action="store")
+```
+
+- If the option is not used, `args.list` is set to *None*, the default value of parameter *default* in *add_argument()* method.
+
+```python
+>>> args = parser.parse_args("--list 1 2 3 4".split())
+>>> args.list
+[1, 2, 3, 4]
+```
+
+The trick here is that we use the parameter [*nargs*](https://docs.python.org/zh-cn/3/library/argparse.html#nargs) in the *add_argument()* method. *nargs* takes the following values:
+
+* an integer *N*: this option consumes exactly *N* values in the command line. Note that if *N=1*, the option still produces a single-element list.
+* `?`: this option takes one value from the command line if possible, and produces a single object. If no value is available, use the *default* value.
+* `*` / `+`: this option takes as many values as possible. The difference between `*` and `+` is that `+` must take at least one value, otherwise it raises an exception.
+* `argparse.REMAINDER`: take all remaining values.
 
 # Threading | Thread-based parallelism
 
@@ -1044,7 +1272,7 @@ Write event logging to a target file:
 
 [itertools module](https://docs.python.org/3/library/itertools.html) implements a number of iterator building blocks.
 
-First we need to clarify the concept of [iterable](https://docs.python.org/3/glossary.html#term-iterable). The official doc describes as an object that is capable of returning its members one at a time. Typical iterables:
+First we need to clarify the concept of [iterable](https://docs.python.org/3/glossary.html#term-iterable). The official doc describes it as an object that is capable of returning its members one at a time. Typical iterables:
 
 - (all [sequence](https://docs.python.org/3/glossary.html#term-sequence) types): list, str, tuple, range, ...
 - (some non-sequence types): dict, file objects, ...
@@ -1100,3 +1328,337 @@ Alright, with adequate knowledge of iterables and iterators, let's dive into the
 
 Reference: [Real Python](https://realpython.com/python-requests/)
 
+# Curses | Terminal handling for character-cell displays
+
+```python
+import curses
+```
+
+The [curses](https://docs.python.org/3/library/curses.html) module, as the de-facto standard for portable advanced terminal handling, provides a highly flexible terminal display API, based on abstract concepts such as window, pad, and textpad.
+
+A curses-based application needs initilization, setting terminal to the right mode via special control codes, and destruction, restoring the terminal. The module provides us with a concise function to do all these things: [*curses.wrapper()*](https://docs.python.org/3/library/curses.html#curses.wrapper).
+
+```python
+def main(stdscr):
+    # stdscr: standard screen
+    # ... do something with stdscr ...
+    
+curses.wrapper(main)
+```
+
+The *wrapper()* function is roughly equivalent to
+
+```python
+def wrapper(func):
+    # func is an callable object
+    
+    # initializes the standard screen object,
+    # use control codes to set the terminal
+    stdscr = curses.initscr() 
+    
+    # turns off automatic echoing of keys to the screen
+    curses.noecho()
+    
+    # turns on the cbreak mode: react to key strokes instantly
+    curses.cbreak()
+    
+    # receives special keys as escape sequences and
+    # interprets them as special values
+    # e.g. <left> -> curses.KEY_LEFT
+    stdscr.keypad(True)
+    
+    try:
+        return func(stdscr) # raise if any exception occurs
+    finally:
+        # always restore the terminal settings 
+        curses.nocbreak()
+        stdscr.keypad(False)
+        curses.echo()
+        curses.endwin() #reverse curses.initscr() settings
+```
+
+Inside a wrapper, or in your main procedure, you can use the various functionalities supported by the curses module, to customize your curses application.
+
+The most important concept in curses is the *Window*.
+
+>  A **window** object represents a rectangular area of the screen, and supports methods to display text, erase it, allow the user to input strings, and so forth.
+
+To get a window object, simply use the default window returned by [*curses.initscr()*](https://docs.python.org/3/library/curses.html#curses.initscr), or call [*curses.newwin()*](https://docs.python.org/3/library/curses.html#curses.newwin). (reference: [Window object docs](https://docs.python.org/3/library/curses.html#window-objects)) Inside a window, you can call [*window.subwin()*](https://docs.python.org/3/library/curses.html#curses.window.subwin) to get a sub-window. The behavior of a sub-window is totally the same as a window.
+
+After you've got a window object. You can (usage: *window.method()*)
+
+- Output (paint): 
+  - [*addch()*](https://docs.python.org/3/library/curses.html#curses.window.addch): paint a character, and **overwrite** any character that already exists, at a given position.
+  - [*addstr()*](https://docs.python.org/3/library/curses.html#curses.window.addstr) / [*addnstr()*](https://docs.python.org/3/library/curses.html#curses.window.addnstr): paint and overwrite a character string.
+  - [*insch()*](https://docs.python.org/3/library/curses.html#curses.window.insch): insert a character, and **shift right** any characters that already exist, at a given position.
+  - [*insertln()*](https://docs.python.org/3/library/curses.html#curses.window.insertln) / [*insdelln()*](https://docs.python.org/3/library/curses.html#curses.window.insdelln): insert blank lines and shift down lines that already exist.
+  - [*insstr()*](https://docs.python.org/3/library/curses.html#curses.window.insstr) / [*insnstr()*](https://docs.python.org/3/library/curses.html#curses.window.insnstr): insert and shift right a character string.
+- Input (get):
+  - [*getch()*](https://docs.python.org/3/library/curses.html#curses.window.getch): get a character and return an integer (may not fall into the ASCII range because of special values). In no-delay mode, return -1 if no input, otherwise block to read.
+  - [*getkey()*](https://docs.python.org/3/library/curses.html#curses.window.getkey): get a character and return a string instead of an integer.
+  - [*getstr()*](https://docs.python.org/3/library/curses.html#curses.window.getstr): return a bytes object from the user.
+- Erase (clear):
+  - [*erase()*](https://docs.python.org/3/library/curses.html#curses.window.erase): clear the window but not updat until invoking [*refresh()*](https://docs.python.org/3/library/curses.html#curses.window.refresh).
+  - [*clear()*](https://docs.python.org/3/library/curses.html#curses.window.clear): clear the window and update right away.
+  - [*deleteln()*](https://docs.python.org/3/library/curses.html#curses.window.deleteln): delete the line under the cursor. All following lines are moved up by one.
+  - [*clrtoeol()*](https://docs.python.org/3/library/curses.html#curses.window.clrtoeol): erase from cursor to the end of the line.
+- Get from the window:
+  - [*inch()*](https://docs.python.org/3/library/curses.html#curses.window.inch): return the character at the given position (use lower 8 bits), the upper bits are the attributes.
+  - [*instr()*](https://docs.python.org/3/library/curses.html#curses.window.insstr): return a byts object extracted from the window; attributes are stripped from the characters.
+- Update windows: the displayed content is not updated until explicit calls.
+  - [*refresh()*](https://docs.python.org/3/library/curses.html#curses.window.refresh): for a window, update the display immediately. (This method internally calls *noutrefresh()* and then *doupdate()*.)
+  - [*noutrefresh()*](https://docs.python.org/3/library/curses.html#curses.window.noutrefresh): for a window, update the underlying data structure but do not force an update aof the physical screen.
+  - [*curses.doupdate()*](https://docs.python.org/3/library/curses.html#curses.doupdate): update the physical screen.
+  - [Remark](https://docs.python.org/3/library/curses.html#curses.doupdate): If you have to update multiple windows, you can speed performance and perhaps reduce screen flicker by issuing *noutrefresh()* calls on all windows, followed by a single *doupdate()*.
+
+Here is a small tip about the curses-coordinate philosophy: the whole module uses (y, x) as the coordinate, but this actually means the (row, col) position of a cell, and makes you consider a window as a matrix of shape (LINES, COLS).
+
+You may want to try out this fun interactive program below (written by: me). It's a little verbose because the APIs are primitive. But as you can see, these simple APIs can be composed into wonderful things with your brilliant mind. 
+
+```python
+import curses
+from curses import wrapper
+
+class LineAdder:
+    def __init__(self, win, start_line, *attr):
+        self.win = win
+        self.line = start_line
+        self.attr = attr
+
+    def add(self, message=""):
+        self.win.addstr(self.line, 0, message, *self.attr)
+        self.line += 1
+
+    def skip(self, nlines):
+        self.line += nlines
+
+    def hline(self):
+        self.win.hline(self.line, 0, "-", self.win.getmaxyx()[1])
+        self.line += 1
+
+    def replace(self, line_n, message=""):
+        '''
+        replace a given line with message, overwrite the previous characters
+        if line_n < 0, then line_n is calculated as self.line + line_n
+        '''
+        if line_n <= 0:
+            self.line += line_n
+        else:
+            self.line = line_n
+        
+        self.win.move(self.line, 0) # move to the given line
+        self.win.addstr(message, *self.attr) # print message
+        self.win.clrtoeol() # then clear to eol if the previous message is longer
+
+        if message != "": # if message is not empty
+            self.line += 1 # then self.line is added by 1 to keep consistency
+
+
+def main(stdscr):
+    stdscr.clear()
+    
+    # display a welcome banner
+    stdscr.addstr("** HELLO, CURSES! **", curses.A_REVERSE)
+    stdscr.chgat(-1, curses.A_REVERSE)
+
+    # initialze some colors
+    #curses.start_color() # you don't need this because the wrapper did it for you
+    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLACK)
+
+    #stdscr.getkey()
+    stdscr.addstr(2, 0, "Curses module is really helpful!", curses.color_pair(1))
+    
+    # I implemented a simple class to add multiple lines in the same form
+    line_adder = LineAdder(stdscr, 3, curses.color_pair(2))
+    line_adder.add("Now let me show you how this works.")
+    line_adder.hline()
+    line_adder.add("Tell me your name, and I'll use getstr() to get it.")
+    line_adder.add("Your name: ")
+
+    curses.echo()
+    name = stdscr.getstr(20).decode() # getstr() returns a bytes object, convert to str
+    curses.noecho()
+
+    line_adder.skip(1)
+    line_adder.add(f"Now I know you are {name}! Hello, {name}!")
+    line_adder.skip(1)
+
+    line_adder.add("I guess you are a girl! Am I right? [y / n] ")
+
+    # a basic question-based dialog loop
+    while True:
+        
+        curses.echo()
+        respon = stdscr.getkey().lower()
+        curses.noecho()
+        line_adder.replace
+        if respon == "y":
+            line_adder.skip(1)
+            line_adder.add("Yah, so lucky!")
+            break
+
+        elif respon == "n":
+            line_adder.add("Sorry, pls forgive me. I'm just a poor program who knows nothing ...")
+            stdscr.getkey()
+            line_adder.replace(-1)
+            line_adder.replace(-1, "Then you must be a boy! [y / n]")
+        
+        else:
+            line_adder.add("Invalid answer, use 'y' or 'n': ")
+            
+    #stdscr.refresh()
+    stdscr.getkey() # block the screen from terminating
+```
+
+Reference: [Python HOWTOs](https://docs.python.org/3/howto/curses.html); [Python curses docs](https://docs.python.org/3/library/curses.html).
+
+For those who want to achieve more in terminal displays, a good suggestion for your next step is the [Urwid](http://urwid.org/tutorial/index.html) module, which provides a higher-level abstraction, supporting common UI widgts such as buttons, textboxes, charts, diagrams and so forth. It may be a more difficult topic, but once you conquer it, it becomes your powerful tool.
+
+# Json | JSON Encoder and Decoder
+
+```python
+import json
+```
+
+First and foremost, why and when should we use json objects instead Python original data types.
+
+The [json](https://docs.python.org/3/library/json.html) complies with [RFC 7159](https://tools.ietf.org/html/rfc7159.html) in most aspects with minor exceptions. It exposes a user-friendly API to handle json objects.
+
+To load (serialize) a json object from a formatted string, use [*json.loads()*](https://docs.python.org/3/library/json.html#json.loads).
+
+```python
+>>> s = '["foo", {"bar":["baz", null, 1.0, 2]}]'
+>>> json.loads(s)
+['foo', {'bar': ['baz', None, 1.0, 2]}]
+```
+
+- When the formatted string has repeated names (which is not permitted in RFC), this module ignores all but the last name-value pair for a given name.
+
+  ```python
+  >>> weird_json = '{"x": 1, "x": 2, "x": 3}'
+  >>> json.loads(weird_json)
+  {'x': 3}
+  ```
+
+To do the opposite (encode a *dict* or *list* into a json formatter string), use [*json.dumps()*](https://docs.python.org/3/library/json.html#json.dumps).
+
+```python
+>>> json.dumps({1: ["alice", "bob"], "relation": "lovers"})
+'{"1": ["alice", "bob"], "relation": "lovers"}'
+>>> json.dumps([True, None, float("inf")])
+'[true, null, Infinity]'
+```
+
+- Non-string keys are all converted into strings. So `loads(dumps(x)) != x` if x has non-string keys.
+-  Values are converted to corresponding json formats:
+  - `True/False -> true/false`
+  - `None -> null`
+  - `float('nan'/'+inf'/'-inf') -> NaN/Infinity/-Infinity`
+  - The last two set of values are not permitted by RFC. However, this module considers them valid JSON number literal values. Set argument *allow_nan* as False to enforce a strict compliance with RFC.
+
+Another pair of decode / encode methods, [*json.load()*](https://docs.python.org/3/library/json.html#json.load) and [*json.dump()*](https://docs.python.org/3/library/json.html#json.dump), share most functionalities with the two methods above, but are designed for IO streams, e.g. file streams.
+
+```python
+# Writing JSON data
+with open('data.json', 'w') as f:
+    json.dump(data, f)
+
+# Reading data back
+with open('data.json', 'r') as f:
+    data = json.load(f)
+```
+
+More advanced usage of the json module, including details about *load()* and *dump()* methods, serializing objects that are not standards JSON types, and playing with JSONEncoder and JSONDecoder, can be found in the following two links.
+
+References:
+
+- [Python3 cookbook: 读写JSON数据](https://python3-cookbook.readthedocs.io/zh_CN/latest/c06/p02_read-write_json_data.html)
+- [Python documentation: json -- JSON encoder and decoder](https://docs.python.org/3/library/json.html)
+
+# Bytes and Bytearray
+
+Bytes and bytearray are two new types introduced in Python 3.x. They represent a sequence of 8-bit integers, or bytes. In fact, a byte sequence is exactly what resides in the memory, without any additional information about its meaning. If properly explained, a byte sequence can be a string, an image, or a binary file.
+
+Let's start with bytes. As said before, a bytes object is a sequence, and each element is an 8-bit integer. So, you can create a bytes object from a list of integers within the range 0 to 255.
+
+```python
+>>> obj = bytes([1, 2, 3])
+>>> obj
+b'\x01\x02\x03'
+```
+
+`obj` is a bytes object. It is displayed as `b'\x01\x02\x03`. This means this object contains three bytes: 0x01, 0x02, and 0x03.
+
+By default, these values are interpreted as **ASCII** characters. In ASCII, integer 0 is 0x30 (48), character A is 0x41 (65), and character a is 0x61 (97). Now that we know a bytes object can be interpreted as a ASCII sequence, let's spell the sentence "Hello, Bytes!" in ASCII.
+
+```python
+>>> bytes([72, 101, 108, 108, 111, 44, 32, 66, 121, 116, 101, 115, 33])
+b'Hello, Bytes!
+```
+
+Amazing! Isn't it? But, if we always have to create a bytes object in this cumbersome style, then we won't even think of using it! Luckily, creating bytes objects from *int* lists is introduced only to give you an insight into bytes. Now let's look at other convenient ways to create a bytes object.
+
+- *bytes(string, coding)*: encodes a string to a byte sequence (must specify the *coding* method). (refer to this [Chinese post](https://zhuanlan.zhihu.com/p/46216008) to learn more about coding methods and their relationships)
+
+  ```python
+  >>> bytes("message", encoding="ascii")
+  b'message'
+  >>> bytes("信息", encoding="utf-8")specifying the coding method, str.encode() uses ascii by default.
+  b'\xe4\xbf\xa1\xe6\x81\xaf'
+  >>> bytes("信息", encoding="gbk")
+  b'\xd0\xc5\xcf\xa2'
+  ```
+
+- *b*-prefix strings: equivalent to *bytes(string, encoding="ascii")*.
+
+  ```python
+  >>> b"interesting"
+  b'interesting'
+  >>> b"信息"
+    File "<stdin>", line 1
+  SyntaxError: bytes can only contain ASCII literal characters.
+  ```
+
+- *bytes(n_bytes)*: returns a byte sequence of length *n_bytes*, filled with 0x00.
+
+```python
+>>> bytes(5)
+b'\x00\x00\x00\x00\x00'
+>>> bytes() # or bytes(0)
+b''
+```
+
+- *str.encode(coding)*: same as *bytes(string, coding)*, with one difference. Without specifying the *coding* method, *str.encode()* uses ascii by default.
+
+To convert a bytes object to a string, call *decode()*.
+
+```python
+>>> b'\xe4\xbf\xa1\xe6\x81\xaf'.decode("utf-8")
+'信息'
+```
+
+I guess you have grasped the philosophy of bytes. Now let's talk a little more about *bytearray*. *Bytearray* can be considered as an extension of *bytes*. Bytearray objects allow modification to the byte sequence, including *append()*, *pop()*, *extend()*, *insert()*, *remove()*, *find()*, *replace()* and other methods that also appears in the *list* type. 
+
+```python
+>>> obj = bytearray("Hello", encoding="utf-8")
+>>> # append: must be an integer, can't use bytes objects
+>>> obj.append(44) # 44 = ,
+>>> obj.append(32) # 32 = (space)
+>>> obj
+bytearray(b'Hello, ')
+>>> # extend
+>>> obj.extend(b"Bytearray!")
+>>> obj
+bytearray(b'Hello, Bytearray!')
+>>> # replace: copy and replace
+>>> obj.replace(b'l', b'y')
+bytearray(b'Heyyo, Bytearray!')
+>>> # reverse: in-place
+>>> obj.reverse()
+>>> obj
+bytearray(b'!yarraetyB ,olleH')
+```
+
+Remark that bytes objects do not support all of these methods, because a byte object can not be modified after creation.
