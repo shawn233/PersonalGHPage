@@ -1268,6 +1268,12 @@ Write event logging to a target file:
 # ERROR:root:can't think of anything else to write
 ```
 
+[LogRecord attributes](https://docs.python.org/3/library/logging.html#logrecord-attributes)
+
+![image-20200413230054283](.assets/image-20200413230054283.png)
+
+![image-20200413230112508](.assets/image-20200413230112508.png)
+
 # Itertools | Functions creating iterators for efficient looping
 
 [itertools module](https://docs.python.org/3/library/itertools.html) implements a number of iterator building blocks.
@@ -1318,7 +1324,84 @@ Alright, with adequate knowledge of iterables and iterators, let's dive into the
 
 # Collections
 
+# Time | Time access and conversions
+
+```python
+import time
+```
+
+Term explanation
+
+- **epoch**: the point where the time starts, can be accessed via `time.gmtime(0)`.
+- **UTC**: Coordinated Universal Time (can be interchanged with GMT, Greenwhich Mean Time).
+- **DST**: Daylight Saving Time.
+- The precision of the various real-time functions may be less than suggested by the units in which their value or argument is expressed. E.g. on most Unix systems, the clock “ticks” only 50 or 100 times a second.
+- ![image-20200413191921394](.assets/image-20200413191921394.png)
+
+## Formatted Time
+
+By default, a time is represented as a timestamp, or float. To convert such a timestamp to a formatted time string such as 
+
+```bash
+2020-04-13 (Apr,Mon) 09:47:13 PM CST
+```
+
+, class [*time.struct_time*](https://docs.python.org/3/library/time.html#time.struct_time) and method [*time.strftime()*](https://docs.python.org/3/library/time.html#time.strftime) come in handy.
+
+A [*struct_time*](https://docs.python.org/3/library/time.html#time.struct_time) object represents a specific moment in time, with values stored as a named tuple.
+
+![image-20200413215115891](.assets/image-20200413215115891.png)
+
+With a *struct_time* object, you can display it, i.e. convert it to a time string, using [*strftime()*](https://docs.python.org/3/library/time.html#time.strftime). The output format can be passed as a parameter, which supports directives as listed below.
+
+![image-20200413215826101](.assets/image-20200413215826101.png) 
+
+![image-20200413215848446](.assets/image-20200413215848446.png)
+
+![image-20200413215917460](.assets/image-20200413215917460.png)
+
+A *struct_time* object is usually obtained from one of the following methods, as the return value:
+
+- [*gmtime()*](https://docs.python.org/3/library/time.html#time.gmtime): converts seconds since the epoch to a *struct_time* object in UTC. 
+- [*localtime()*](https://docs.python.org/3/library/time.html#time.localtime): converts seconds since the epoch to a *struct_time* object in the local timezone.
+- [*strptime()*](https://docs.python.org/3/library/time.html#time.strptime): parses a time string according to a given format.
+
+For example, the formatted string at the section beginning is actually obtained from the method *localtime()*.
+
+```python
+>>> time.strftime("%Y-%m-%d (%b,%a) %I:%M:%S %p %Z", time.localtime())
+'2020-04-13 (Apr,Mon) 09:47:13 PM CST' 
+```
+
+Now this is all for a *time* implementation. Similar functionality is also supported in the *datetime* module. You may check it out in the [official docs](https://docs.python.org/3/library/datetime.html).
+
 # Datetime
+
+```python
+from datetime import *
+```
+
+The [datetime](https://docs.python.org/3/library/datetime.html) module supplies several classes for manipulating dates and times.
+
+Subclass relationships:
+
+```python
+object
+    timedelta # difference between date/time/datetime 
+              # instances (unit: microsecond)
+    tzinfo # time-zone information
+        timezone
+    time # independent of any particular day
+    date # a naive date
+        datetime
+```
+
+Similar(For curious readers) Distinguishing **aware** and **naive** objects ([official docs](https://docs.python.org/3/library/datetime.html#aware-and-naive-objects)):
+
+- An **aware** object is aware of its timezone. It represents a specific moment in time that is not open to interpretation (no ambiguity). Specifically, a time or datetime object `obj` ("Date objects are always naive.") is aware if both of the following hold, otherwise naive.
+  - `obj.tzinfo` is not *None*.
+  - `obj.tzinfo.utcoffset(d)` does not return *None*.
+- A **naive** object, in contrast, is not subject to any particular timezone. It can't be unambiguously interpreted to a specific moment in time unless further explained by an application. For example, a naive object may be interpreted as local time, UTC (Coordinated Universal Time), or time in some other timezone. "Naive objects are easy to understand and to work with, at the cost of ignoring some aspects of reality."
 
 # Psutil
 
