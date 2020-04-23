@@ -1270,9 +1270,9 @@ Write event logging to a target file:
 
 [LogRecord attributes](https://docs.python.org/3/library/logging.html#logrecord-attributes)
 
-![image-20200413230054283](.assets/image-20200413230054283.png)
+![image-20200413230054283](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/image-20200413230054283.png)
 
-![image-20200413230112508](.assets/image-20200413230112508.png)
+![image-20200413230112508](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/image-20200413230112508.png)
 
 # Itertools | Functions creating iterators for efficient looping
 
@@ -1336,7 +1336,7 @@ Term explanation
 - **UTC**: Coordinated Universal Time (can be interchanged with GMT, Greenwhich Mean Time).
 - **DST**: Daylight Saving Time.
 - The precision of the various real-time functions may be less than suggested by the units in which their value or argument is expressed. E.g. on most Unix systems, the clock “ticks” only 50 or 100 times a second.
-- ![image-20200413191921394](.assets/image-20200413191921394.png)
+- ![image-20200413191921394](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/image-20200413191921394.png)
 
 ## Formatted Time
 
@@ -1350,15 +1350,15 @@ By default, a time is represented as a timestamp, or float. To convert such a ti
 
 A [*struct_time*](https://docs.python.org/3/library/time.html#time.struct_time) object represents a specific moment in time, with values stored as a named tuple.
 
-![image-20200413215115891](.assets/image-20200413215115891.png)
+![image-20200413215115891](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/image-20200413215115891.png)
 
 With a *struct_time* object, you can display it, i.e. convert it to a time string, using [*strftime()*](https://docs.python.org/3/library/time.html#time.strftime). The output format can be passed as a parameter, which supports directives as listed below.
 
-![image-20200413215826101](.assets/image-20200413215826101.png) 
+![image-20200413215826101](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/image-20200413215826101.png) 
 
-![image-20200413215848446](.assets/image-20200413215848446.png)
+![image-20200413215848446](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/image-20200413215848446.png)
 
-![image-20200413215917460](.assets/image-20200413215917460.png)
+![image-20200413215917460](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/image-20200413215917460.png)
 
 A *struct_time* object is usually obtained from one of the following methods, as the return value:
 
@@ -1590,7 +1590,7 @@ The above example is not perfect, since it goes wrong when it sees "Hello Rachel
 
 ## Compilation Flags
 
-![image-20200423094110464](.assets/image-20200423094110464.png)
+![image-20200423094110464](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/image-20200423094110464.png)
 
 * multiple flags are concatenated with OR (`|`), such as `re.A | re.I`.
 * `re.VERBOSE` makes your RE much more readable by taking the following effects:
@@ -1677,7 +1677,7 @@ Request header
 
 - GET request has no body
 - As described in HTTP/1.1 specification, `POST` is designed to allow a uniform method to cover the following functions:
-  ![image-20200418122036436](.assets/image-20200418122036436.png)
+  ![image-20200418122036436](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/image-20200418122036436.png)
 - The response of a HEAD request has no body, but may have Content-Length, which relates to the GET request.
 - A Put request is responded with 201 (Created) if the target resource is created, and with 202 (OK) or 204 (No Content) if the target resource is updated.
 - An OPTIONS request can be used to identify allowed request methods. Its response has a `Allow` field with the allowed methods.

@@ -33,3 +33,7 @@ Temporary Items
 
 # debug file
 _site
+
+# some tmp files in ./_posts
+_posts/*.bak
+_posts/.scripts
