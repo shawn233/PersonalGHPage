@@ -582,7 +582,7 @@ tensor([-2.5073, -0.3591, -1.6641])
 tensor(1.5102)
 ```
 
-Remark that loss becomes zero when and only when probabilities, i.e. softmax(pred), become
+Remark that loss becomes zero when and only when probabilities, or softmax(pred), become
 
 ```python
 >>> truth
@@ -886,7 +886,7 @@ The trick here is that we use the parameter [*nargs*](https://docs.python.org/zh
 
 # Threading | Thread-based parallelism
 
-[threading module](https://docs.python.org/3/library/threading.html) allows you to implement **parallelism** in a convenient way.
+The [threading module](https://docs.python.org/3/library/threading.html) allows you to implement **parallelism** in a convenient way.
 
 ```python
 import threading
@@ -1407,9 +1407,302 @@ Similar(For curious readers) Distinguishing **aware** and **naive** objects ([of
 
 # Chardet
 
+# Re | Regular expression operations
+
+The [re](https://docs.python.org/3/library/re.html) module provides regular expression matching operations.
+
+```python
+import re
+```
+
+## Basics
+
+In this section you will learn what is regular expressions and how to write a regular expression.
+
+- A **regular expression** specifies a set of strings that matches it.
+
+- A **character class** is a set of characters that you wish to match, enclosed by `[` and `]`.
+  - `[abc]` or `[a-c]` matches any of `a`, `b`, or `c`.
+  - `[^5]` matches any character except `'5'`.
+  - **No metacharacter is active** inside a character class. For `^`, it only indicates a complementing set when it appears as the first character, otherwise it means a match to a literal `^`.
+  - Special sequences: predefiened sets of characters
+    - decimal digits: `\d = [0-9]`
+    - whitespace characters: `\s = [\t\n\r\f\v]`
+    - alphanumeric characters: `\w = [a-zA-Z0-9_]`
+    - ...
+    - Special sequences can be included inside a character class.
+  
+- **Dot `.` matches anything except a newline character (`\n`)**. But in the `re.DOTALL` mode, `.` matches anything including `\n`.
+
+- **Greedy Repeated qualifiers**: `* + ? {m,n}`, "greedy" means they'll consume as much text as possible. 
+  
+  - `{m,n}`: repeat at least `m`, at most `n` times. Omitting `m` is interpreted as a lower limit of 0, while omitting `n` results in an upper bound of infinity.
+  - `* = {0, }`: zero or more times. Note using `*` matches the empty string. For example, `'a*'` matches `''`, `'a'`, `'aa'`, `'aaa'` and so forth.
+  - `+ = {1, }`: one or more times.
+  - `? = {0,1}`: once or zero times.
+  - The corresponding non-greedy set: `*? +? ?? {m,n}?`. For example, to match an HTML tag, you'd better use `<.*?>` instead of `<.*>`. (It's not recommended to use regular experssions to parse HTML or XML in the [official doc](https://docs.python.org/3/howto/regex.html#greedy-versus-non-greedy).)
+  
+- **Groups** in a regular expression, indicated with `(` and `)`, capture substrings of interest. Matching results can be retrieved by passing a group index to *group()*, *start()*, *end()*, and *span()*.
+
+  - Group 0 is always the whole RE. Other group indices are determined by counting the opening parenthesis from left to right. For example, `0 (1 (2) ) (3)`.
+
+  - An example of retrieving group results
+
+    ```python
+    >>> p = re.compile('(a(b)c)d')
+    >>> m = p.match('abcd')
+    >>> m.group(0)
+    'abcd'
+    >>> m.groups() # start from group 1
+    ('abc', 'b')
+    >>> m.group(1)
+    'abc'
+    >>> m.group(2)
+    'b'
+    ```
+
+  - **Backreference**: `\1` will succeed if the exact contents of group 1 can be found at the current position. This syntax is frequently used in string subsitutions.
+
+- **Group extensions**: `(?...)` is introduced by Perl developers as an extension syntax. The specific extension is indicated by the characters immediately after `?`: 
+
+  - `(?:...)`: Non-capturing group, which doesn't have an index and thus doesn't allow retrieval from the result.
+  - `(?=...)`: Positive lookahead assertion, see [HOWTO](https://docs.python.org/3/howto/regex.html#lookahead-assertions).
+  - `(?!...)`: Negative lookahead assertion, see [HOWTO](https://docs.python.org/3/howto/regex.html#lookahead-assertions).
+  - `(?P...)`: Python-specific extensions, as follows.
+  - `(?P<name>...)`: Named group, which additionally associates a name reference with the group. (Method [*gorupdict()*](https://docs.python.org/3/library/re.html#re.Match.groupdict) retrieves all named groups as a *dict*.)
+  - `(?P=name)`: Backreference for the named group, which means the contents of the group called *name* should again be matched at the current position.
+
+Examples
+
+- domain name (`**.**.**`): `^[\w-]+(?:\.[\w-]+)+$`
+
+- email addresses (`**@**.**`): `^[\.\w-]+@[\w-]+(?:\.[\w-]+)+$`
+
+- (utf-8) Chinese characters: `[\u4e00-\u9fa5]`
+
+- file name extension, excluding .bat and .exe (very hard, isn't it):
+
+  ```
+  .*[.](?!bat$|exe$)[^.]*$
+  ```
+
+## Python RE
+
+An example of matching correctly-spelt names:
+
+Say we want to match all names of celebrities out of the next-year Grammy Award's introduction.
+
+> Ladies and gentlemen! Let me introduce you: Shawn Mendes, Ed Sheeran and T. Swift!
+
+```python
+>>> import re
+>>>
+>>> # 1. Start from your desired matches
+>>> names = ["Lebron James", "K. Bryant", "Harley Quinn"]
+>>> #    find the shared pattern
+>>> name_spelt_correctly = r"[A-Z][a-z\.]* [A-Z][a-z\.]*"
+>>>
+>>> # 2. Compile your pattern
+>>> pattern = re.compile(name_spelt_correctly)
+>>> #    see if it works perfectly
+>>> pattern.match("Lebron James, the big guy")
+<re.Match object; span=(0, 12), match='Lebron James'>
+>>> pattern.search("dear Saoise Ronan")
+<re.Match object; span=(5, 17), match='Saoise Ronan'>
+>>> pattern.match("AtOTALLY wrongname")
+>>> # returns None if pattern can't match
+>>>
+>>> # 3. Do the match!
+>>> intro = "Ladies and gentlemen! Let me introduce you: Shawn Mendes, Ed Sheeran and T. Swift!"
+>>> pattern.findall(intro)
+['Shawn Mendes', 'Ed Sheeran', 'T. Swift']
+>>> #    and it works
+```
+
+The above example is not perfect, since it goes wrong when it sees "Hello Rachel Mcadams!", or "Ms. Jennifer Lawrence". Anyway, this example reveals the pipeline of using regular expressions in Python.
+
+- Write a pattern string up to your demand.
+
+- Compile the pattern string and get a [*Pattern* object](https://docs.python.org/3/library/re.html#regular-expression-objects), by [*re.compile()*](https://docs.python.org/3/library/re.html#re.compile).
+
+- Perform a matching operation and get your result.
+
+  - [*search()*](https://docs.python.org/3/library/re.html#re.search): scan through *string*, and return the first match, or *None* if no match is found.
+
+    ```python
+    >>> re.search(r"\d+", "a12b34c")
+    <re.Match object; span=(1, 3), match='12'>
+    >>> re.search(r"\d+", "abc")
+    >>> # None
+    ```
+
+  - [*match()*](https://docs.python.org/3/library/re.html#re.match): return a match from the beginning of *string*, or *None* if the beginning of the *string* doesn't match the pattern.
+
+    ```python
+    >>> re.match(r"\d+", "123---")
+    <re.Match object; span=(0, 3), match='123'>
+    >>> re.match(r"\d+", "-123")
+    >>> # None
+    ```
+
+  - [*findall()*](https://docs.python.org/3/library/re.html#re.findall): return a list of all non-overlapping matches of the pattern in *string*.
+
+    ```python
+    >>> re.findall(r"\d+", "1qaz23")
+    ['1', '23']
+    >>> re.findall(r"\d+", "qaswed")
+    []
+    ```
+  
+- Alternatively, a compiled pattern can be used to modify *string*:
+
+  - [*split()*](https://docs.python.org/3/library/re.html#re.split): split *string* by the occurrences of the pattern. Any capturing groups will also appear in the result.
+  
+    ```python
+    >>> re.split(r'[\W]+', 'Words, words, words.')
+    ['Words', 'words', 'words', '']
+    >>> re.split(r'([\W]+)', 'Words, words, words.')
+    ['Words', ', ', 'words', ', ', 'words', '.', '']
+    ```
+  
+  - [*sub(repl, string)*](https://docs.python.org/3/library/re.html#re.sub): return a new string obtained by replacing left-most occurences of the pattern in *string* by the replacement *repl*. Backreference can be used in *repl*, which allows you to incorporate portions of the original text in the resulting replacement string.
+  
+    ```python
+    >>> p = re.compile('(blue|white|red)')
+    >>> p.sub('colour', 'blue socks and red shoes')
+    'colour socks and colour shoes'
+    >>>
+    >>> # An example using backreference
+    >>> p = re.compile('section{ ( [^}]* ) }', re.VERBOSE)
+    >>> p.sub(r'subsection{\1}','section{First} section{second}')
+    'subsection{First} subsection{second}'
+    >>>
+    >>> # Another example using function as `repl`
+    >>> def hexrepl(match):
+    ...     "Return the hex string for a decimal number"
+    ...     value = int(match.group())
+    ...     return hex(value)
+    ...
+    >>> p = re.compile(r'\d+')
+    >>> p.sub(hexrepl, 'Call 65490 for printing, 49152 for user code.')
+    'Call 0xffd2 for printing, 0xc000 for user code.'
+    ```
+
+## Compilation Flags
+
+![image-20200423094110464](.assets/image-20200423094110464.png)
+
+* multiple flags are concatenated with OR (`|`), such as `re.A | re.I`.
+* `re.VERBOSE` makes your RE much more readable by taking the following effects:
+  * Any whitespace outside a character class (`[ ]`) is ignored.
+  * Supporting comments with a `#`.
+
+Check out the [official HOWTO](https://docs.python.org/3/howto/regex.html#compilation-flags) for a detailed explanation.
+
+## Appendix
+
+Special Note 1: When a pattern is a unicode string (type *str*), the search string can be either a unicode (*str*) or a byte string (type *bytes*). But strings in different types are not a match. 
+
+Special Note 2: DO use **raw** string notations for a regular expression pattern, with a prefix `'r'`. A normal pattern string has torepresent a backslash `\` as double backslashes `\\` subject to the rule of escape sequences, in which  `\\\\\` represents matching a literal backslash. But in raw strings, backslash `\` is not considered as part of an escape sequence, but as itself. So raw pattern strings avoid all these troubles.
+
+Metacharacters:
+
+```
+. ^ $ * + ? { } [ ] \ | ( )
+```
+
+- `|`: `A|B` will match any string that matches either A or B.
+
+  - Very low precedence: `Crow|Servo` matches either `'Crow'` or `'Servo'`.
+
+- `^ $ \A \Z`: 
+  If *re.MULTILINE* is not set,
+
+  - `^` or `\A`: the beginning of the string.
+  - `$` or `\Z`: the end of the string.
+
+  If *re.MULTILINE* is set,
+
+  - `^` also matches the beginning of each line (immediately after `\n`).
+  - `$` also matches the end of each line (any location followed by `\n`).
+
+- `\b`: word boundar (whitespace or non-alphanumeric character). For example, `\bclass\b` matches `'class'` in "no class at all" but not in "the declassified algorithm".  
+
+  - MUST be used in a raw string, to avoid collision with Python's backspace (`\b`, ASCII value 8)
+
+- `\D = [^\d] \S = [^\s] \W = [^\w] \B = [^\b]`.
+
 # Requests
 
+The [requests](https://requests.readthedocs.io/en/master/) library is the de facto standard for making HTTP requests in Python. It's elegant and simple. And as said in its official docs,
+
+> **Requests** is an elegant and simple HTTP library for Python, built for human beings. 
+
+## Sending requests
+
+## Inspecting response
+
+## Authentication
+
+## Configuration
+
+
+
 Reference: [Real Python](https://realpython.com/python-requests/)
+
+## HTTP tips
+
+Request header
+
+```
+[Method] [URL] [Protocol]\r\n
+[FIELD-NAME 1]: [FIELD 1]\r\n
+...
+[FIELD-NAME N]: [FIELD N]\r\n
+\r\n
+[body]
+```
+
+| Method  | Meaning |
+| ------- | ------- |
+| GET     | requests a representation of the specified resource |
+| POST    | sends data to the server |
+| HEAD    | requests the header of a GET request |
+| PUT     | creates a new resource or replaces a current resource with the request payload |
+| DELETE  | deletes the specified resource |
+| CONNECT | starts two-way communications with the requested resource |
+| OPTIONS | describes the communication options for the target resource |
+| TRACE   | performs a message loop-back test along the path to the target resource, for debug |
+| PATCH   | applies partial modifications to a resource |
+
+- GET request has no body
+- As described in HTTP/1.1 specification, `POST` is designed to allow a uniform method to cover the following functions:
+  ![image-20200418122036436](.assets/image-20200418122036436.png)
+- The response of a HEAD request has no body, but may have Content-Length, which relates to the GET request.
+- A Put request is responded with 201 (Created) if the target resource is created, and with 202 (OK) or 204 (No Content) if the target resource is updated.
+- An OPTIONS request can be used to identify allowed request methods. Its response has a `Allow` field with the allowed methods.
+- An HTTP method is [**idempotent**](https://developer.mozilla.org/en-US/docs/Glossary/Idempotent) if an identical request can be made once or several times in a row with the same effect while **leaving the server in the same state**. In other words, an idempotent method should not have any side-effects (except for keeping statistics). Implemented correctly, `GET`, `HEAD`, `PUT` and `DELETE` method are idempotent, but not the `POST` method. To be idempotent, only the actual back-end state of the server is considered, the status code returned by each request may differ, such as `DELETE`.
+- An HTTP method is [**safe**](https://developer.mozilla.org/en-US/docs/Glossary/safe) if it doesn't alter the state of the server. In other words, a method is safe if it leads to a read-only operation. Safe HTTP methods: `GET`, `HEAD` and `OPTIONS`. All safe methods are idempotent, but not all idempotent methods are safe, such as `PUT` and `DELETE`.
+
+Reference
+- [Status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
+- [Header fields](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers)
+- [MIME types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types)
+
+Response header
+
+```
+[Protocol] [Status]\r\n
+[FIELD-NAME 1]: [FIELD 1]\r\n
+...
+[FIELD-NAME N]: [FIELD N]\r\n
+\r\n
+<html>\r\n
+  ...
+</html>
+```
+
+HTTP/1.0 drawback: each TCP connection only allows one request. N resources require N connections, which cause high connection overhead.
 
 # Curses | Terminal handling for character-cell displays
 
@@ -1745,3 +2038,40 @@ bytearray(b'!yarraetyB ,olleH')
 ```
 
 Remark that bytes objects do not support all of these methods, because a byte object can not be modified after creation.
+
+# 2to3 | Automated Python 2 to 3 code translation
+
+This is command-line Python program that translates Python 2 codes to Python 3. For a customized usage, see [lib2to3](https://docs.python.org/3.7/library/2to3.html#module-lib2to3).
+
+Say we have a Python 2.x source file, named `example.py`.
+
+```python
+def greet(name):
+    print "Hello, {0}!".format(name)
+print "What's your name?"
+name = raw_input()
+greet(name)
+```
+
+`$ 2to3 example.py` shows you the difference between Python 2 and 3 codes after translation. But it won't really do the translation.
+
+To write translated codes into the source file, use `-w` argument.
+
+```bash
+$ 2to3 -w example.py
+```
+
+This will write the translated codes into `example.py` and create a backup file named `example.py.bak`.
+
+After translation, `example.py` looks like this:
+
+```python
+def greet(name):
+    print("Hello, {0}!".format(name))
+print("What's your name?")
+name = input()
+greet(name)
+```
+
+
+
