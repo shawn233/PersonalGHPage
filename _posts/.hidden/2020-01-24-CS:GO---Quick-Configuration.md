@@ -27,14 +27,14 @@ Enable console, disable intro video, give the game high CPU priority, and load i
 // Display
 mat_monitorgamma "1.6"          // lightness
 sys_antialiasing "0"            // anti aliasing
-fps_max 200                     // max fps
+fps_max 300                     // max fps
 //r_dynamic "0"                   // disable dynamic lighting
-//r_drawparticles "0"             // disable particles
-//r_drawtracers_firstperson "0"   // disable trace fires
-//muzzleflash_light 0             // diable the flash of shooting
-//r_eyemove 0                     // makes eye motionless
-//r_gloss 0                       // turn off eye shine
-//cl_downloadfilter nosounds      // block downloads of custom sounds from server
+r_drawparticles 1             	// disable particles
+r_drawtracers_firstperson 1   	// disable trace fires
+muzzleflash_light 1             // diable the flash of shooting
+r_eyemove 0                     // makes eye motionless
+r_gloss 0                       // turn off eye shine
+cl_downloadfilter nosounds      // block downloads of custom sounds from server
 mat_savechanges                 // save changes
 con_enable 1                    // enable console
 cl_autohelp "1"                 // activates help messages
@@ -115,7 +115,7 @@ echo "* Generic setting successful *"
 
 ```bash
 // Mouse
-sensitivity 1.15
+sensitivity 0.95
 m_rawinput 1
 m_mouseaccel1 0
 m_mouseaccel2 0
@@ -126,9 +126,9 @@ echo "* Mouse setting successful *"
 crosshair 1
 cl_crosshairstyle "4"
 cl_crosshaircolor "4"           // light blue
-cl_crosshairsize 3              // crosshair size
+cl_crosshairsize 4              // crosshair size
 cl_crosshairthickness 0.5
-cl_crosshairgap -1.5
+cl_crosshairgap -1
 cl_crosshairdot 0               // no dot
 cl_crosshair_drawoutline 1
 
