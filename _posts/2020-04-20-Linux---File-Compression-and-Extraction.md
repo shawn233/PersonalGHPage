@@ -42,6 +42,31 @@ By reading this article, you will learn the basic usage of four common compressi
 
 # Comparison
 
+```
+# compare zip, 7z and tar
+# !7z a -t7z -r download-actor.7z ./download
+# !tar c -czf tmp.tar.gz ./download
+
+# !ls -hl
+# total 2.2G
+# drwxr-xr-x 3 root root 4.0K Mar 24 10:21 download
+# -rw-r--r-- 1 root root 675M Apr 20 03:04 download-actor.7z
+# -rw-r--r-- 1 root root 679M Apr 20 03:07 download-actor.tar.gz
+# -rw------- 1 root root 690M Apr 20 02:57 download-actor.zip
+# -rw-r--r-- 1 root root 3.7K Apr 20 02:51 download-official.py
+# -rw-r--r-- 1 root root  11M Apr 20 02:51 facescrub_actors_shuffled.txt
+# drwxr-xr-x 1 root root 4.0K Apr  3 16:24 sample_data
+# -rw-r--r-- 1 root root 154M Apr 20 03:27 tmp.tar.gz
+
+# from google.colab import drive
+# drive.mount("/content/drive")
+# !cp download-actor.zip /content/drive/My\ Drive/sync/NNInversion/
+# !rm /content/drive/My\ Drive/sync/NNInversion/download-actor.7z
+# drive.flush_and_unmount()
+```
+
+
+
 # Conclusion
 
 

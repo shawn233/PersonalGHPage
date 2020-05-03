@@ -496,7 +496,39 @@ array(['bunny', 'bunny', 'cat'], dtype='<U6')
 
 # Pandas
 
+```python
+import pandas as pd
+```
 
+
+
+## Play with your DataFrame
+
+
+
+```python
+df = pd.read_csv( ... )
+
+len(df)    #
+df.shape   #
+
+pd.set_option("display.max.columns", None)
+pd.set_option("display.precision", 2)
+
+df.head()  # display the first five lines
+df.tail()  # display the last five lines
+df.tail(3) # display the last three lines
+
+df.info()
+
+df.describe()
+```
+
+
+
+
+
+Reference: [Real Python | Explore Pandas and Python to Explore Your Dataset](https://realpython.com/pandas-python-explore-dataset/).
 
 # Matplotlib
 
@@ -745,6 +777,112 @@ Examples
 # Pillow
 
 
+
+# Tkinter | Python interface to Tcl/Tk
+
+## Introduction
+
+The [tkinter](https://docs.python.org/3/library/tkinter.html) package is the Python interface to the Tk GUI toolkit. It is always the best choice for a Python programmer to start learning GUI.
+
+Reasons to choose tkinter:
+
+- a functional interface built into Python
+- cross-platform, rendered using native operating system elements
+- no need to be fancy
+
+Reasons not to choose tkinter: top priority is to build a modern, shiny interface.
+
+Just like state-of-the-art GUIs, a tkinter GUI is built from widgets. 
+
+>  **Widgets** (小部件，控件) are the elements through which users interact with our program.
+
+Tkinter supports most widgets you see in a common OS: labels, entries, image displays, textboxes, buttons, radiobuttons, checkbuttons, comboboxes, listboxes, scrollbars and etc. Here is a demo that shows some of the tkinter widgets. 
+
+![Widget Demo (Linux)](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/Screenshot%20from%202020-05-03%2012-24-47.png)
+
+## Layout
+
+Geometry managers organize all widgets in a window, with the help of a special widget, *tk.Frame()*, which behaves very similar to the root window, *tk.Tk()*. Tkinter supports three types of geometry managers.
+
+| Method          | Manager    | Usage                                          |
+| --------------- | ---------- | ---------------------------------------------- |
+| Linear layout   | *.pack()*  | *.pack(fill="none", side="top", expand=False)* |
+| Absolute layout | *.place()* | *.place(x=, y=)*                               |
+| Grid layout     | *.grid()*  | *.grid(row=, column=, sticky=)*                |
+
+* All three managers support *padx*, *pady*, *ipadx* and *ipady* to configure external and internal paddings (unit: pixel).
+
+* Grid layout resizing can be configured with *.columnconfigure()* and *.rowconfigure()*, supporting three arguments: *column/row*, *weight* and *minsize*.
+
+  * *column/row*: index of the grid column/row to configure. (can be a list of indices)
+  * *weight*: a relative value that determines how a column/row should respond to window resizing.
+  * *minsize*: minimum size of the column width / row height in pixels.
+
+* The *stick* arguement of *.grid()* can have equivalent effects to the *fill* argument of *.pack()*:
+
+  | *.grid()*       | *.pack()*                  |
+  | --------------- | -------------------------- |
+  | *sticky="ns"*   | *fill="y"*                 |
+  | *sticky="ew"*   | *fill="x"*                 |
+  | *sticky="nsew"* | *fill="both", expand=True* |
+
+## Widget Value
+
+Only *StringVar()*-typed variables are allowed.
+
+## Event Binding
+
+- *.bind(event=, event_handler=)*: a general event binding method applicable to all widgets. (A full list of tkinter [event types](https://web.archive.org/web/20190512164300/http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/event-types.html).)
+- *tk.Button(command=)*: a special binding method for *tk.Button*, equivalent to *Button.bind(event="\<Button-1\>", event_handler=)*.
+
+## Widget Reference
+
+Some commonly used widgets are displayed in the introduction. For a full list of widgets, check out [Basic Widgets](https://tkdocs.com/tutorial/widgets.html) and [More Widgets](https://tkdocs.com/tutorial/morewidgets.html) in the [TkDocs](https://tkdocs.com/tutorial/index.html) tutorial.
+
+Attributes shared by most widgets:
+
+- *master*: parent widget, default: *root*.
+- *text*: text content displayed in the widget.
+- *width* and *height*: size of the widget. Remark that a better way to control the widget size is to use the *sticky* argument of *.grid()*.
+- *relief* and *borderwidth* (*bd*): border type and width of the widget.
+  ![relief options (Windows 10)](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/17_5_tk_frame_reliefs_win10.31d7bc5f4fe6.jpg)
+- *background* (*bg*) and *foreground* (*fg*): background and foreground (text) color of the widget.
+- *textvariable*/*variable*/*listvariable*: the variable attached to the widget.
+
+Widget naming convention using shorthands
+
+| Widget Class | Variable Name Prefix | Example       |
+| ------------ | -------------------- | ------------- |
+| `Label`      | `lbl`                | `lbl_name`    |
+| `Button`     | `btn`                | `btn_submit`  |
+| `Entry`      | `ent`                | `ent_age`     |
+| `Text`       | `txt`                | `txt_notes`   |
+| `Frame`      | `frm`                | `frm_address` |
+
+This is what a (20, 20) panel looks like:
+
+![image-20200424173548140](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/image-20200424173548140.png)
+
+*width* and *height* arguments in widget creation are measured in **text unit**.
+
+- 1 horizontal text unit = width of "0".
+- 1 vertical text unit = height of "0".
+- Text unit measurement ensures text always fits in their widgets, regardless of the specific operating system.
+
+Three basic *tk.Entry* operations:
+
+- **Retrieving text** with `.get()`
+- **Deleting text** with `.delete()`
+- **Inserting text** with `.insert()`
+
+## Color Reference
+
+For a full color alias list, check out [here](http://www.science.smith.edu/dftwiki/index.php/Color_Charts_for_TKinter). Also, you can specify a color using [hexadecimal RGB values](https://en.wikipedia.org/wiki/Web_colors#Hex_triplet).
+
+- A hex RGB value takes 24 bits, comprised of three bytes, representing RED value, GREEN value and BLUE value respectively, i.e., 0xRRGGBB.
+- This [web tool](https://htmlcolorcodes.com/) helps you get color's hexadecimal codes in a visualized way.
+
+Reference: [Real Python | Python GUI Programming With Tkinter](https://realpython.com/python-gui-tkinter/).
 
 # Argparse | Parse for command-line options, arguments and sub-commands
 
