@@ -11,33 +11,19 @@ tags:
     - Linux
 ---
 
-<!--
-<head>
-    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            inlineMath: [['$','$']]
-            }
-        });
-    </script>
-</head>
--->
-
 # Quick Starter
 
-This section is intended for experienced programmers who may have a long history working with C++, Java, or Python, but have no idea how to write a shell script. For these readers, I try to offer them a quick start in shell by bridging shell concepts to those they are already familiar with in other languages.
+This post is intended for experienced programmers who may have a long history working with C++, Java, or Python, but have no idea how to write a shell script. For these readers, I try to offer them a quick start in shell by bridging shell concepts to those they are already familiar with in other languages.
 
 For me, **shell** is a powerful *string* processing program integrated with complete *logical controls* and *internal system functionalities*.
 
 By writing a shell script, it may perform the following tasks:
 
-- operating efficiently on *files* and *directories*
-- executing and combining *shell commands* for more complex processing
-- interacting with *command-line* users in a simple and nice way
+- operating efficiently on **files** and **directories**
+- executing and combining **shell commands** for more complex processing
+- interacting with **command-line** users in a simple and nice way
 
-Ensure you do have basic background knowledge about those concepts I marked with *Italian font*. Now let's dive into the wondeful shell!
+Ensure you do have basic background knowledge about those concepts I marked with **bold font**. Now let's dive into the wondeful shell!
 
 ## Defining variables
 
@@ -50,7 +36,7 @@ if not os.path.exists(target_dir):
 # now we are sure ./foo exists
 ```
 
-To do this in a shell script, we first need a variable to hold the path like *target_dir* did in Python. There are mainly (how many) ways to define a variable.
+To do this in a shell script, we first need a variable to hold the path like *target_dir* did in Python. There are mainly 4 ways to define a variable.
 
 ### Direct assignment
 
@@ -96,7 +82,7 @@ target_dir=./foo
 
 All assignments above work. But as an experienced programmer, you may want to know more about the internals of the direct assignment. As I've mentioned,
 
-> For me, **shell** is a powerful string processing program
+> For me, shell is a powerful **string** processing program
 
 By using the term "string processing program", I literally mean it only processes **strings**. See the code above, we assign a string to a variable, but we do not need to wrap the strings with `" "` or `' '` like other languages. Thus, even when we want to assign integer values to a variable, shell recognizes those digits as strings.
 
@@ -106,7 +92,7 @@ a=123 # no difference to a="123"
 b=hello123
 ```
 
-- Although shell considers all values as strings, it is able to recognize strings that are essentially numbers, and even provides such condition statements to determine whether a string is a number.
+- Although shell considers all values as strings, it is able to recognize strings that are essentially numbers, and even provides such condition statements as to determine whether a string is a number.
 
 ### From execution
 
@@ -144,6 +130,10 @@ echo $val
 ### Implicit assignment
 
 ### Special variables
+
+## Defining Arrays
+
+
 
 ## Logical controls
 
