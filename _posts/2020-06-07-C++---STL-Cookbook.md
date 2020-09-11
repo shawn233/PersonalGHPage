@@ -160,13 +160,13 @@ void insert ( initializer_list<value_type> il );
 // examples
 pair<string, string> myfavorite("banana", "yellow");
 unordered_map<string,string> summer(
-    {{"watermellon", "green"},{"pineapple", "orange"}});
+    { {"watermellon", "green"},{"pineapple", "orange"} });
 
 mymap.insert(myfavorite); // copy
 mymap.insert(make_pair<string,string>("strawberry", "red")); // move
 mymap.insert(summer.begin(), summer.end()); // range
-mymap.insert({{"grape", "purple"},
-              {"pomegranate", "red"}}); // initializer list
+mymap.insert({ {"grape", "purple"},
+              {"pomegranate", "red"} }); // initializer list
 ```
 
 ### Access elements
