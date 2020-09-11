@@ -22,11 +22,11 @@ unordered_map is basically a hash table, comprised of keys and their mapped valu
 
 The following figure shows a possible mapping relations in an unordered_map object.
 
-![Mapping relations in an unordered_map object](.assets/unordered_mapping.svg)
+![Mapping relations in an unordered_map object](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/unordered_mapping.svg)
 
 With respect to the relations in the above figure, the unordered_map object should be stored in the memory as:
 
-![unordered_map object in memory](.assets/unordered_map_memory.svg)
+![unordered_map object in memory](https://github.com/shawn233/shawn233.github.io/raw/master/_posts/.assets/unordered_map_memory.svg)
 
 Then values can be accessed in an efficient way via hashing their keys.
 
