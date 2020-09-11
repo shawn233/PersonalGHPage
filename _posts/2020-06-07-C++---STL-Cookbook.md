@@ -12,6 +12,8 @@ tags:
     - Data structures
 ---
 
+
+
 # std::unordered_map
 
 Official docs: [link](http://www.cplusplus.com/reference/unordered_map/unordered_map/)
@@ -92,10 +94,10 @@ initialize the container with the contents of the list
 // declaration
 unordered_map(initializer_list<value_type> il);
 // example
-unordered_map<string,string> second({{"apple","red"},
-                                     {"lemon","yellow"}});
-unordered_map<string,string> third ({{"orange","orange"},
-                                     {"strawberry","red"}});
+unordered_map<string,string> second({ {"apple","red"},
+                                     {"lemon","yellow"} });
+unordered_map<string,string> third ({ {"orange","orange"},
+                                     {"strawberry","red"} });
 ```
 
 ### Copy
