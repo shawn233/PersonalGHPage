@@ -12,8 +12,6 @@ tags:
     - Data structures
 ---
 
-
-
 # std::unordered_map
 
 Official docs: [link](http://www.cplusplus.com/reference/unordered_map/unordered_map/)
