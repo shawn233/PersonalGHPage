@@ -2211,5 +2211,52 @@ name = input()
 greet(name)
 ```
 
+# Typing | Support for Type Hints
+
+First things first, why do we need type hints?
+
+```python
+def inc(a: int) -> int:
+    return a + 1
+```
+
+`:` and `->` are used for type hints in this example. These annotations or hints help us understand how to use these functions. We can view it as a standardized code commenting format. Moreover, type hints help some automatic type checkers to verify your code.
+
+```python
+def list_inc(nums: list) -> int: # however `list` tells nothing about the element type
+    for i in range(len(nums)):
+        inc(nums[i])
+```
+
+In this example, we find that the original types are not enough to fully express complex data types, e.g. `List[int]`. Here is where the [typing](https://docs.python.org/3/library/typing.html) module comes in handy. It supports more types and type composition. Frequently used types include
+
+```python
+from typing import Any, Union, Tuple, Callable, Optional, List
+```
+
+See a more complete explanation in the official docs. Reference: [blog by cuiqingcai](https://cuiqingcai.com/7071.html).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
