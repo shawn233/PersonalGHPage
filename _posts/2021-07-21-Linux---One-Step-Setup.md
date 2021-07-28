@@ -15,7 +15,7 @@ This script is a one-step setup script for newly installed Ubuntu OS. Run this s
 
 ```bash
 chmod +x setup.sh
-sudo ./setup.sh
+./setup.sh
 ```
 
 Then have fun with the prepared OS for your purpose.
@@ -69,10 +69,10 @@ apt-get update
 # basic
 echo
 echo "Installing basic pacakges ..."
-apt-get install -y vim
-apt-get install -y tree
-apt-get install -y tmux
-apt-get install -y git
+sudo apt-get install -y vim
+sudo apt-get install -y tree
+sudo apt-get install -y tmux
+sudo apt-get install -y git
 
 echo "alias py=python" > $ALIAS_PATH
 echo "alias tnew='tmux new -s wxy'" >> $ALIAS_PATH
