@@ -5,9 +5,9 @@ header-img: img/post-bg-2015.jpg
 email: wang_x_y@sjtu.edu.cn
 description: "Every failure is leading towards success."
 keyword: "Xinyu Wang, 王欣宇, Python, Security, Privacy, Machine Learning"
-url: "http://shawn233.github.io"          # your host, for absolute URL
-baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
-github_repo: "https://github.com/shawn233/shawn233.github.io.git" # you code repository
+#url: "http://shawn233.github.io"          # your host, for absolute URL
+#baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
+#github_repo: "https://github.com/shawn233/shawn233.github.io.git" # you code repository
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
